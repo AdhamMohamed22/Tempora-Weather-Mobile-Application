@@ -49,6 +49,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.runtime.livedata)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -56,4 +57,21 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
+
+    // Lottie
+    implementation("com.airbnb.android:lottie-compose:6.1.0")
+    //Navigation
+    implementation("androidx.navigation:navigation-compose:2.8.8")
+    //Serialization for NavArgs
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+
+    implementation("androidx.lifecycle:lifecycle-viewmodel-compose-android:2.8.7")
+    //Gson
+    implementation ("com.google.code.gson:gson:2.8.9")
+    //Retrofit
+    implementation ("com.squareup.retrofit2:retrofit:2.11.0")
+    implementation ("com.squareup.retrofit2:converter-gson:2.11.0")
+    //LiveData & Compose
+    val compose_version = "1.0.0"
+    implementation ("androidx.compose.runtime:runtime-livedata:$compose_version")
 }
