@@ -58,8 +58,10 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-    // Lottie
+    //Lottie
     implementation("com.airbnb.android:lottie-compose:6.1.0")
+    //Animated Navigation Bar
+    implementation("com.exyte:animated-navigation-bar:1.0.0")
     //Navigation
     implementation("androidx.navigation:navigation-compose:2.8.8")
     //Serialization for NavArgs

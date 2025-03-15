@@ -1,4 +1,4 @@
-package com.example.tempora.currentweather
+package com.example.tempora.composables.home
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -11,12 +11,12 @@ import com.example.tempora.data.repository.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class CurrentWeatherViewModel(private val repository: Repository) : ViewModel() {
+class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
 
     class CurrentWeatherFactory(private val repository: Repository) : ViewModelProvider.Factory
     {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return CurrentWeatherViewModel(repository) as T
+            return HomeScreenViewModel(repository) as T
         }
     }
 
