@@ -94,7 +94,7 @@ fun MainScreen() {
                             tint = if (selectedIndex == item.ordinal)
                                 colorResource(R.color.white)
                             else
-                                Color.LightGray
+                                colorResource(R.color.secondaryColor)
                         )
                     }
                 }
