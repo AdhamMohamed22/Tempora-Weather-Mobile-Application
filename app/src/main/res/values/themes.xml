@@ -1,6 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <style name="Theme.TEMPORA" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.TEMPORA" parent="android:Theme.Material.Light.NoActionBar">
+        <!-- Hide the status bar -->
+        <item name="android:windowFullscreen">true</item>
+        <!-- Make status bar transparent (optional) -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+    </style>
 
 </resources>

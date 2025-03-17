@@ -2,10 +2,11 @@ package com.example.tempora.data.repository
 
 import com.example.tempora.data.models.CurrentWeather
 import com.example.tempora.data.remote.WeatherRemoteDataSource
+import kotlinx.coroutines.flow.Flow
 
 class Repository(private val remoteDataSource: WeatherRemoteDataSource) : IRepository{
-    override suspend fun getCurrentWeather(): CurrentWeather {
-        return remoteDataSource.getCurrentWeather()
+    override suspend fun getCurrentWeather(lat: Double, lon: Double, appid: String): Flow<CurrentWeather> {
+        return remoteDataSource.getCurrentWeather(lat,lon,appid)
     }
 
     companion object {
@@ -22,4 +23,5 @@ class Repository(private val remoteDataSource: WeatherRemoteDataSource) : IRepos
             }
         }
     }
+
 }

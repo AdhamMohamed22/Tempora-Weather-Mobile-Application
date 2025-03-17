@@ -15,18 +15,17 @@ import androidx.compose.ui.unit.sp
 import com.example.tempora.R
 
 
-@Preview
 @Composable
-fun TemperatureDegree(degree: String = "21°C") {
+fun TemperatureDegree(degree: String) {
     Text(
-        text = degree,
+        text = "${degree}°K",
         letterSpacing = 0.sp,
         style = TextStyle(
             brush = Brush.verticalGradient(
                 0f to colorResource(R.color.primaryColor),
                 1f to colorResource(R.color.primaryColor).copy(alpha = 0.3f)
             ),
-            fontSize = 70.sp,
+            fontSize = 60.sp,
             fontWeight = FontWeight.Black
         ),
     )

@@ -8,12 +8,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.sp
 import com.example.tempora.R
 
-@Preview
 @Composable
-fun WeatherDescription(description: String = "Precipitations") {
+fun WeatherDescription(description: String) {
     Text(
         text = description,
-        fontSize = 20.sp,
+        fontSize = 22.sp,
         color = colorResource(R.color.primaryColor),
         fontWeight = FontWeight.Thin
     )

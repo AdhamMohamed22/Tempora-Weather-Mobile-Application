@@ -1,19 +1,30 @@
 package com.example.tempora.composables.home
 
+import android.os.Build
+import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tempora.R
 import com.example.tempora.composables.home.components.City
@@ -22,11 +33,14 @@ import com.example.tempora.composables.home.components.Logo
 import com.example.tempora.composables.home.components.TemperatureDegree
 import com.example.tempora.composables.home.components.WeatherDescription
 import com.example.tempora.composables.home.components.WeatherDetails
+import com.example.tempora.data.models.CurrentWeather
 import com.example.tempora.data.remote.RetrofitHelper
 import com.example.tempora.data.remote.WeatherRemoteDataSource
 import com.example.tempora.data.repository.Repository
+import com.example.tempora.data.response_state.ResponseState
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Preview
 @Composable
 fun HomeScreen(){
@@ -36,7 +50,33 @@ fun HomeScreen(){
             WeatherRemoteDataSource(RetrofitHelper.retrofit)
         ))
     val viewModel: HomeScreenViewModel = viewModel(factory = currentWeatherFactory)
+
+    val currentWeatherState by viewModel.currentWeather.collectAsStateWithLifecycle()
+    val context = LocalContext.current
     viewModel.getCurrentWeather()
+
+    LaunchedEffect(Unit) {
+        viewModel.message.collect{
+            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+        }
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.getCurrentWeather()
+    }
+
+    when(currentWeatherState){
+        is ResponseState.Loading -> LoadingIndicator()
+        is ResponseState.Failed -> Text("Failed !")
+        is ResponseState.Success -> DisplayHomeScreen(currentWeather = (currentWeatherState as ResponseState.Success).currentWeather)
+    }
+
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun DisplayHomeScreen(currentWeather: CurrentWeather){
+    val scope = rememberCoroutineScope()
 
     Box(modifier = Modifier.fillMaxSize())
     {
@@ -52,15 +92,27 @@ fun HomeScreen(){
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Spacer(modifier = Modifier.height(24.dp))
             Logo()
             Spacer(modifier = Modifier.height(8.dp))
             IconWeatherStatus()
-            TemperatureDegree()
-            WeatherDescription()
+            TemperatureDegree(currentWeather.main.temp.toString())
+            WeatherDescription(currentWeather.weather[0].description)
             Spacer(modifier = Modifier.height(8.dp))
-            City()
+            City(currentWeather.name,currentWeather.sys.country)
             Spacer(modifier = Modifier.height(24.dp))
-            WeatherDetails(40, 45, "2.2", "1000", "Mon, Mar 17  17:00")
+            WeatherDetails(currentWeather.clouds.all, currentWeather.main.humidity, currentWeather.wind.speed.toString(), currentWeather.main.pressure.toString(), currentWeather.dt.toLong())
         }
+    }
+}
+
+@Composable
+fun LoadingIndicator(){
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .wrapContentSize()
+    ) {
+        CircularProgressIndicator()
     }
 }

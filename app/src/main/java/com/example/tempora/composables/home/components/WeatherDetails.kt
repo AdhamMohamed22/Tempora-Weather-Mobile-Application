@@ -1,5 +1,7 @@
 package com.example.tempora.composables.home.components
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,28 +20,40 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.tempora.R
+import java.time.Instant
+import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun WeatherDetails(
     cloud: Int,
     humidity: Int,
     windSpeed: String,
     pressure: String,
-    date: String
+    date: Long
 ) {
+    // Convert to Instant
+    val instant = Instant.ofEpochSecond(date)
+    // Format the date and time in Africa/Cairo
+    val formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy - HH:mm:ss")
+        .withZone(ZoneId.of("Africa/Cairo"))
+    val formattedTime = formatter.format(instant)
+
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = date,
-            color = Color.White.copy(alpha = 0.7f),
+            text = formattedTime,
+            color = colorResource(R.color.white),
             fontSize = 16.sp
         )
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Row(
             modifier = Modifier
@@ -101,7 +115,7 @@ fun WeatherDetailItem(icon: Int, label: String, value: String) {
         Image(
             painter = painterResource(icon),
             contentDescription = label,
-            modifier = Modifier.size(35.dp)
+            modifier = Modifier.size(40.dp)
         )
         Spacer(modifier = Modifier.width(5.dp))
         Column(

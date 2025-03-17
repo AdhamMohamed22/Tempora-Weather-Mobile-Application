@@ -3,7 +3,9 @@ package com.example.tempora
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -70,7 +72,7 @@ fun MainScreen() {
             AnimatedNavigationBar(
                 modifier = Modifier.height(64.dp),
                 selectedIndex = selectedIndex,
-                cornerRadius = shapeCornerRadius(36.dp),
+                cornerRadius = shapeCornerRadius(20.dp),
                 ballAnimation = Parabolic(tween(300)),
                 indentAnimation = Height(tween(300)),
                 barColor =  colorResource(id = R.color.primaryColor),

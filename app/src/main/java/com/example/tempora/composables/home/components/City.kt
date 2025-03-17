@@ -20,9 +20,8 @@ import androidx.compose.ui.unit.dp
 import com.example.tempora.R
 
 
-@Preview
 @Composable
-fun City(location: String = "Alexandria") {
+fun City(location: String,country: String) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -34,7 +33,7 @@ fun City(location: String = "Alexandria") {
             contentScale = ContentScale.FillHeight
         )
         Text(
-            text = location,
+            text = "$location - $country",
             style = MaterialTheme.typography.titleLarge,
             color = colorResource(R.color.primaryColor),
             fontWeight = FontWeight.Medium
