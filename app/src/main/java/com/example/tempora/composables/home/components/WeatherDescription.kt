@@ -1,5 +1,6 @@
 package com.example.tempora.composables.home.components
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.colorResource
@@ -14,6 +15,7 @@ fun WeatherDescription(description: String) {
         text = description,
         fontSize = 22.sp,
         color = colorResource(R.color.primaryColor),
+        //style = MaterialTheme.typography.titleLarge,
         fontWeight = FontWeight.Thin
     )
 }

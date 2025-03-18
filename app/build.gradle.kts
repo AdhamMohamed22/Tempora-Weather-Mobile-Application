@@ -59,6 +59,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+
+    //Glide
+    implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
     //ConstrainLayout Compose
     implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     //Lottie
