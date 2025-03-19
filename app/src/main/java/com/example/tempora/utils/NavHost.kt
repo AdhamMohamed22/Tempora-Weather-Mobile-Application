@@ -12,7 +12,7 @@ import com.example.tempora.composables.settings.SettingsScreen
 @Composable
 fun SetupAppNavigation(navController: NavHostController) {
 
-    NavHost(navController = navController, startDestination = ScreenRoutes.Home.route)
+    NavHost(navController = navController, startDestination = ScreenRoutes.Favourites.route)
     {
         composable(ScreenRoutes.Home.route) { HomeScreen() }
         composable(ScreenRoutes.Favourites.route) { FavouritesScreen() }
