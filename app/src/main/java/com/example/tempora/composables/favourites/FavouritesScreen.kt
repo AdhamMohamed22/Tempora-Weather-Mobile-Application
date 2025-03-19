@@ -65,5 +65,4 @@ fun FavouritesScreen() {
             )
         }
     }
-
 }
