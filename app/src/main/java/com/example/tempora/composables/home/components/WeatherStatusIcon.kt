@@ -14,13 +14,13 @@ import com.example.tempora.R
 
 @Preview
 @Composable
-fun IconWeatherStatus() {
+fun WeatherStatusIcon() {
     Image(
         painter = painterResource(id = R.drawable.weather_status),
         contentDescription = "Icon Weather Status",
         contentScale = ContentScale.Crop,
         modifier = Modifier
-            .size(50.dp)
+            .size(70.dp)
             .clip(CircleShape)
     )
 }

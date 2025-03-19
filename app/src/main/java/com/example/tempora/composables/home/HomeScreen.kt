@@ -31,7 +31,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tempora.R
 import com.example.tempora.composables.home.components.City
-import com.example.tempora.composables.home.components.IconWeatherStatus
+import com.example.tempora.composables.home.components.WeatherStatusIcon
+import com.example.tempora.composables.home.components.ListOf5WeekDaysCards
 import com.example.tempora.composables.home.components.ListOfHourCards
 import com.example.tempora.composables.home.components.Logo
 import com.example.tempora.composables.home.components.TemperatureDegree
@@ -68,7 +69,8 @@ fun HomeScreen(){
 
     LaunchedEffect(Unit) {
         viewModel.getCurrentWeather()
-        viewModel.getForecastWeather()
+        viewModel.getTodayForecastWeather()
+        viewModel.get5DaysForecastWeather()
     }
 
     when(currentWeatherState){
@@ -84,7 +86,8 @@ fun HomeScreen(){
 fun DisplayHomeScreen(currentWeather: CurrentWeather,viewModel: HomeScreenViewModel){
     val scope = rememberCoroutineScope()
 
-    val forecastWeatherState by viewModel.forecastWeather.collectAsStateWithLifecycle()
+    val todayForecastWeatherState by viewModel.todayForecastWeather.collectAsStateWithLifecycle()
+    val daysForecastWeather by viewModel.daysForecastWeather.collectAsStateWithLifecycle()
 
     Box(modifier = Modifier.fillMaxSize())
     {
@@ -102,8 +105,8 @@ fun DisplayHomeScreen(currentWeather: CurrentWeather,viewModel: HomeScreenViewMo
         ) {
             Spacer(modifier = Modifier.height(24.dp))
             Logo()
-            Spacer(modifier = Modifier.height(8.dp))
-            IconWeatherStatus()
+            //Spacer(modifier = Modifier.height(8.dp))
+            WeatherStatusIcon()
             TemperatureDegree(currentWeather.main.temp.toString())
             WeatherDescription(currentWeather.weather[0].description)
             Spacer(modifier = Modifier.height(8.dp))
@@ -113,11 +116,20 @@ fun DisplayHomeScreen(currentWeather: CurrentWeather,viewModel: HomeScreenViewMo
 
             Spacer(modifier = Modifier.height(8.dp))
             Text(text = "Today's Hourly Temperature", style = MaterialTheme.typography.titleMedium, color = colorResource(R.color.white), fontWeight = FontWeight.Bold)
-            when(forecastWeatherState){
+            when(todayForecastWeatherState){
                 is ForecastWeatherResponseState.Loading -> LoadingIndicator()
                 is ForecastWeatherResponseState.Failed -> Text("Failed !")
-                is ForecastWeatherResponseState.Success -> ListOfHourCards(todayForecast = (forecastWeatherState as ForecastWeatherResponseState.Success).forecastWeather)
+                is ForecastWeatherResponseState.Success -> ListOfHourCards(todayForecast = (todayForecastWeatherState as ForecastWeatherResponseState.Success).forecastWeather)
             }
+
+
+            Text(text = "Upcoming 5 Days Temperature", style = MaterialTheme.typography.titleMedium, color = colorResource(R.color.white), fontWeight = FontWeight.Bold)
+            when(daysForecastWeather){
+                is ForecastWeatherResponseState.Loading -> LoadingIndicator()
+                is ForecastWeatherResponseState.Failed -> Text("Failed !")
+                is ForecastWeatherResponseState.Success -> ListOf5WeekDaysCards(fiveDaysList = (daysForecastWeather as ForecastWeatherResponseState.Success).forecastWeather)
+            }
+
         }
     }
 }

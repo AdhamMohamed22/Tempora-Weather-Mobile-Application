@@ -30,7 +30,7 @@ fun HourCard(todayForecast: Item0) {
     Card(
         modifier = Modifier
             .wrapContentSize(Alignment.Center)
-            .padding(8.dp),
+            .padding(horizontal = 12.dp, vertical = 8.dp),
         shape = RoundedCornerShape(24.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(containerColor = colorResource(R.color.secondaryColor).copy(alpha = 0.75f),
