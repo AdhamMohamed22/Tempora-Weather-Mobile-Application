@@ -29,7 +29,7 @@ fun City(location: String,country: String) {
         Image(
             painter = painterResource(id = R.drawable.location_pin),
             contentDescription = null,
-            modifier = Modifier.height(20.dp),
+            modifier = Modifier.height(24.dp),
             contentScale = ContentScale.FillHeight
         )
         Text(

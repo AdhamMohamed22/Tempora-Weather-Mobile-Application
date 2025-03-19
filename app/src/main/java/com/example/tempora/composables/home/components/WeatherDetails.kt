@@ -25,7 +25,6 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.example.tempora.R
 import java.time.Instant
 import java.time.ZoneId
@@ -124,8 +123,8 @@ fun WeatherDetailItem(icon: Int, label: String, value: String) {
             modifier = Modifier.width(80.dp), // Ensuring consistent text width
             horizontalAlignment = Alignment.CenterHorizontally // Align text to the start)
         ){
-            Text(text = label, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
-            Text(text = value, color = Color.White, fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            Text(text = label, color = Color.White, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+            Text(text = value, color = Color.White, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
         }
     }
 }
