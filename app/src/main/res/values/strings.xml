@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">TEMPORA</string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
+    <string name="title_activity_location_picker">LocationPickerActivity</string>
 </resources>

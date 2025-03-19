@@ -20,7 +20,6 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
-import java.util.Locale.filter
 
 class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
 
