@@ -4,6 +4,7 @@ import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -105,7 +106,6 @@ fun DisplayHomeScreen(currentWeather: CurrentWeather,viewModel: HomeScreenViewMo
         ) {
             Spacer(modifier = Modifier.height(24.dp))
             Logo()
-            //Spacer(modifier = Modifier.height(8.dp))
             WeatherStatusIcon(currentWeather.weather[0].description)
             TemperatureDegree(currentWeather.main.temp.toString())
             WeatherDescription(currentWeather.weather[0].description)
