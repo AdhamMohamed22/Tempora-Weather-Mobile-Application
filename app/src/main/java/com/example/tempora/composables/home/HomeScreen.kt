@@ -106,7 +106,7 @@ fun DisplayHomeScreen(currentWeather: CurrentWeather,viewModel: HomeScreenViewMo
             Spacer(modifier = Modifier.height(24.dp))
             Logo()
             //Spacer(modifier = Modifier.height(8.dp))
-            WeatherStatusIcon()
+            WeatherStatusIcon(currentWeather.weather[0].description)
             TemperatureDegree(currentWeather.main.temp.toString())
             WeatherDescription(currentWeather.weather[0].description)
             Spacer(modifier = Modifier.height(8.dp))
