@@ -23,7 +23,7 @@ import java.time.format.DateTimeFormatter
 
 class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
 
-    class CurrentWeatherFactory(private val repository: Repository) : ViewModelProvider.Factory
+    class HomeScreenViewModelFactory(private val repository: Repository) : ViewModelProvider.Factory
     {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
             return HomeScreenViewModel(repository) as T

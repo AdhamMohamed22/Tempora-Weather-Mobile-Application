@@ -5,7 +5,6 @@ import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -27,7 +26,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -40,6 +38,8 @@ import com.example.tempora.composables.home.components.Logo
 import com.example.tempora.composables.home.components.TemperatureDegree
 import com.example.tempora.composables.home.components.WeatherDescription
 import com.example.tempora.composables.home.components.WeatherDetails
+import com.example.tempora.data.local.WeatherDatabase
+import com.example.tempora.data.local.WeatherLocalDataSource
 import com.example.tempora.data.models.CurrentWeather
 import com.example.tempora.data.remote.RetrofitHelper
 import com.example.tempora.data.remote.WeatherRemoteDataSource
@@ -52,13 +52,15 @@ import com.example.tempora.data.response_state.ForecastWeatherResponseState
 @Composable
 fun HomeScreen(location: Location){
 
-    val currentWeatherFactory = HomeScreenViewModel.CurrentWeatherFactory(
-        Repository.getInstance(
-            WeatherRemoteDataSource(RetrofitHelper.retrofit)
-        ))
-    val viewModel: HomeScreenViewModel = viewModel(factory = currentWeatherFactory)
-
     val context = LocalContext.current
+
+    val homeScreenViewModelFactory = HomeScreenViewModel.HomeScreenViewModelFactory(
+        Repository.getInstance(
+            WeatherRemoteDataSource(RetrofitHelper.retrofit),
+            WeatherLocalDataSource(WeatherDatabase.getInstance(context).getWeatherDao())
+        )
+    )
+    val viewModel: HomeScreenViewModel = viewModel(factory = homeScreenViewModelFactory)
 
     val currentWeatherState by viewModel.currentWeather.collectAsStateWithLifecycle()
 

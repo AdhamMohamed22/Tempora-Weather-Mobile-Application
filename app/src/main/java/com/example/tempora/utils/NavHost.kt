@@ -10,7 +10,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.tempora.composables.alarms.AlarmsScreen
 import com.example.tempora.composables.favourites.FavouritesScreen
-import com.example.tempora.composables.favourites.MapScreen
+import com.example.tempora.composables.favourites.map.MapScreen
 import com.example.tempora.composables.home.HomeScreen
 import com.example.tempora.composables.settings.SettingsScreen
 
