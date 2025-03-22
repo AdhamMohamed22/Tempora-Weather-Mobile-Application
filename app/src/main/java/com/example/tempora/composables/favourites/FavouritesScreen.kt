@@ -1,5 +1,6 @@
 package com.example.tempora.composables.favourites
 
+import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -11,7 +12,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -21,21 +21,24 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.tempora.R
 
-@Preview
+
 @Composable
-fun FavouritesScreen() {
+fun FavouritesScreen(onNavigationToMap: (context: Context)-> Unit) {
+    val context = LocalContext.current
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = { /* Handle FAB click */ },
+                onClick = {
+                /* Handle FAB click */
+                    onNavigationToMap(context)
+                },
                 containerColor = colorResource(R.color.primaryColor),
                 modifier = Modifier.offset(x = 5.dp, y = 10.dp)
             ) {

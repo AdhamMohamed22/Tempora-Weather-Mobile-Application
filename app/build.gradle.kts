@@ -62,9 +62,14 @@ dependencies {
 
     //Location
     implementation("com.google.android.gms:play-services-location:21.1.0")
+    //Google Maps in Jetpack Compose
+    implementation("com.google.maps.android:maps-compose:6.4.1")
+    //Google Places API and Jetpack Compose support for Places
+    implementation("com.google.android.libraries.places:places:3.1.0")
+    implementation("com.google.maps.android:places-compose:0.1.2")
     //Glide
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
-    //ConstrainLayout Compose
+    //ConstrainLayout in Jetpack Compose
     implementation ("androidx.constraintlayout:constraintlayout-compose:1.0.1")
     //Lottie
     implementation("com.airbnb.android:lottie-compose:6.1.0")
@@ -74,14 +79,14 @@ dependencies {
     implementation("androidx.navigation:navigation-compose:2.8.8")
     //Serialization for NavArgs
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
-
+    //AndroidX Lifecycle and provides ViewModel support in Jetpack Compose
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose-android:2.8.7")
     //Gson
     implementation ("com.google.code.gson:gson:2.8.9")
     //Retrofit
     implementation ("com.squareup.retrofit2:retrofit:2.11.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.11.0")
-    //LiveData & Compose
+    //LiveData in Jetpack Compose
     val compose_version = "1.0.0"
     implementation ("androidx.compose.runtime:runtime-livedata:$compose_version")
 }
