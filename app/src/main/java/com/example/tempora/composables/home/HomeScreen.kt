@@ -1,5 +1,6 @@
 package com.example.tempora.composables.home
 
+import android.location.Location
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -48,9 +49,8 @@ import com.example.tempora.data.response_state.ForecastWeatherResponseState
 
 
 @RequiresApi(Build.VERSION_CODES.O)
-@Preview
 @Composable
-fun HomeScreen(){
+fun HomeScreen(location: Location){
 
     val currentWeatherFactory = HomeScreenViewModel.CurrentWeatherFactory(
         Repository.getInstance(
@@ -69,9 +69,9 @@ fun HomeScreen(){
     }
 
     LaunchedEffect(Unit) {
-        viewModel.getCurrentWeather()
-        viewModel.getTodayForecastWeather()
-        viewModel.get5DaysForecastWeather()
+        viewModel.getCurrentWeather(location.latitude,location.longitude)
+        viewModel.getTodayForecastWeather(location.latitude,location.longitude)
+        viewModel.get5DaysForecastWeather(location.latitude,location.longitude)
     }
 
     when(currentWeatherState){

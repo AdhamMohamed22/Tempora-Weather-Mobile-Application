@@ -47,10 +47,10 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
 //        getForecastWeather()
 //    }
 
-    fun getCurrentWeather(){
+    fun getCurrentWeather(lat: Double,lon: Double){
         viewModelScope.launch(Dispatchers.IO){
             try {
-                val result = repository.getCurrentWeather(lat = 44.34,10.99,appid = "52eeded717ded0ae2029412d4f1ae35f")
+                val result = repository.getCurrentWeather(lat,lon,appid = "52eeded717ded0ae2029412d4f1ae35f")
                 result
                     .catch {
                         ex -> mutableCurrentWeather.value = CurrentWeatherResponseState.Failed(ex)
@@ -65,10 +65,10 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
         }
     }
 
-    fun getTodayForecastWeather(){
+    fun getTodayForecastWeather(lat: Double,lon: Double){
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val result = repository.getForecastWeather(lat = 44.34,10.99,appid = "52eeded717ded0ae2029412d4f1ae35f")
+                val result = repository.getForecastWeather(lat,lon,appid = "52eeded717ded0ae2029412d4f1ae35f")
                 result
                     .catch {
                         ex -> mutableTodayForecastWeather.value = ForecastWeatherResponseState.Failed(ex)
@@ -86,14 +86,14 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    fun get5DaysForecastWeather(){
+    fun get5DaysForecastWeather(lat: Double,lon: Double){
 
         val today = LocalDate.now(ZoneId.of("Africa/Cairo"))
         val todayFormattedDate = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
 
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                val result = repository.getForecastWeather(lat = 44.34,10.99,appid = "52eeded717ded0ae2029412d4f1ae35f")
+                val result = repository.getForecastWeather(lat,lon,appid = "52eeded717ded0ae2029412d4f1ae35f")
                 result
                     .catch {
                             ex -> mutable5DaysForecastWeather.value = ForecastWeatherResponseState.Failed(ex)

@@ -60,6 +60,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
 
+    //Location
+    implementation("com.google.android.gms:play-services-location:21.1.0")
     //Glide
     implementation("com.github.bumptech.glide:compose:1.0.0-beta01")
     //ConstrainLayout Compose
