@@ -22,29 +22,49 @@ import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tempora.R
 
 @Composable
 fun SettingsScreen(showFAB: MutableState<Boolean>) {
     showFAB.value = false
+
+    val context = LocalContext.current
+    val settingsScreenViewModelFactory = SettingsScreenViewModel.SettingScreenViewModelFactory(PreferencesManager.getInstance(context))
+    val viewModel: SettingsScreenViewModel = viewModel(factory = settingsScreenViewModelFactory)
+
+    val selectedLanguageState by viewModel.selectedLanguage.collectAsStateWithLifecycle()
+    val selectedLocationState by viewModel.selectedLocation.collectAsStateWithLifecycle()
+    val selectedTemperatureUnitState by viewModel.selectedTemperatureUnit.collectAsStateWithLifecycle()
+    val selectedWindSpeedUnitState by viewModel.selectedWindSpeedUnit.collectAsStateWithLifecycle()
+
     Box(modifier = Modifier.fillMaxSize())
     {
         Image(
             painter = painterResource(id = R.drawable.settingsbackground),
             contentDescription = "SettingsScreen Background",
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize().graphicsLayer(alpha = 0.8f)
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer(alpha = 0.8f)
         )
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -63,44 +83,51 @@ fun SettingsScreen(showFAB: MutableState<Boolean>) {
                     modifier = Modifier.size(35.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text("Settings", style = MaterialTheme.typography.titleLarge, color = colorResource(R.color.white), fontWeight = FontWeight.Bold)
+                Text(stringResource(R.string.settings), style = MaterialTheme.typography.titleLarge, color = colorResource(R.color.white), fontWeight = FontWeight.Bold)
             }
 
-            Spacer(Modifier.height(8.dp))
+            Spacer(Modifier.height(16.dp))
 
             SettingCard(
-                title = "Language",
+                title = stringResource(R.string.language),
                 icon = painterResource(R.drawable.language),
-                options = listOf("English", "Arabic"),
-                selectedOption = "English"
+                options = listOf(stringResource(R.string.english), stringResource(R.string.arabic)),
+                selectedOption = selectedLanguageState,
+                onOptionSelected = { viewModel.savePreference(PreferencesManager.LANGUAGE_KEY,it)}
             )
 
             SettingCard(
-                title = "Location",
+                title = stringResource(R.string.location),
                 icon = painterResource(R.drawable.location),
-                options = listOf("GPS", "Map"),
-                selectedOption = "GPS"
+                options = listOf(stringResource(R.string.gps), stringResource(R.string.map)),
+                selectedOption = selectedLocationState,
+                onOptionSelected = { viewModel.savePreference(PreferencesManager.LOCATION_KEY,it)}
             )
 
             SettingCard(
-                title = "Temperature Unit",
+                title = stringResource(R.string.temperature_unit),
                 icon = painterResource(R.drawable.thermostat),
-                options = listOf("Kelvin °K", "Celsius °C", "Fahrenheit °F"),
-                selectedOption = "Kelvin °K"
+                options = listOf(stringResource(R.string.kelvin_k),
+                    stringResource(R.string.celsius_c), stringResource(R.string.fahrenheit_f)
+                ),
+                selectedOption = selectedTemperatureUnitState,
+                onOptionSelected = { viewModel.savePreference(PreferencesManager.TEMPERATURE_UNIT_KEY,it)}
             )
 
             SettingCard(
-                title = "Wind Speed Unit",
+                title = stringResource(R.string.wind_speed_unit),
                 icon = painterResource(R.drawable.windspeed),
-                options = listOf("Meter/Sec", "Mile/Hour"),
-                selectedOption = "Meter/Sec"
+                options = listOf(stringResource(R.string.meter_sec),
+                    stringResource(R.string.mile_hour)),
+                selectedOption = selectedWindSpeedUnitState,
+                onOptionSelected = { viewModel.savePreference(PreferencesManager.WIND_SPEED_UNIT_KEY,it)}
             )
         }
     }
 }
 
 @Composable
-fun SettingCard(title: String, icon: Painter, options: List<String>, selectedOption: String, onOptionSelected: (String) -> Unit = {}) {
+fun SettingCard(title: String, icon: Painter, options: List<String>, selectedOption: String, onOptionSelected: (String) -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()

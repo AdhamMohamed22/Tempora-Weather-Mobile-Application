@@ -2,4 +2,18 @@
     <string name="app_name">TEMPORA</string>
     <string name="title_activity_splash_screen">SplashScreenActivity</string>
     <string name="title_activity_location_picker">LocationPickerActivity</string>
+    <string name="settings">Settings</string>
+    <string name="language">Language</string>
+    <string name="location">Location</string>
+    <string name="temperature_unit">Temperature Unit</string>
+    <string name="wind_speed_unit">Wind Speed Unit</string>
+    <string name="english">English</string>
+    <string name="arabic">Arabic</string>
+    <string name="gps">GPS</string>
+    <string name="map">Map</string>
+    <string name="kelvin_k">Kelvin °K</string>
+    <string name="celsius_c">Celsius °C</string>
+    <string name="fahrenheit_f">Fahrenheit °F</string>
+    <string name="meter_sec">Meters/Sec</string>
+    <string name="mile_hour">Miles/Hour</string>
 </resources>

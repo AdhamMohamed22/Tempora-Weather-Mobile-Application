@@ -14,19 +14,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.tempora.R
-import com.example.tempora.data.models.CurrentWeather
-import com.example.tempora.data.models.ForecastWeather
 import com.example.tempora.data.models.Item0
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun HourCard(todayForecast: Item0) {
+fun HourCard(todayForecast: Item0, selectedUnit: String) {
     Card(
         modifier = Modifier
             .wrapContentSize(Alignment.Center)
@@ -49,21 +46,21 @@ fun HourCard(todayForecast: Item0) {
                 modifier = Modifier.size(75.dp)
             )
 
-            Text(text = todayForecast.main.temp.toString(), fontWeight = FontWeight.Medium, fontSize = 16.sp)
+            Text(text = "${todayForecast.main.temp} $selectedUnit", fontWeight = FontWeight.Medium, fontSize = 16.sp)
         }
     }
 }
 
 
 @Composable
-fun ListOfHourCards(todayForecast: List<Item0>) {
+fun ListOfHourCards(todayForecast: List<Item0>, selectedUnit: String) {
     LazyRow(
         modifier = Modifier.wrapContentSize(Alignment.Center),
     )
     {
         items(todayForecast.size)
         {
-            HourCard(todayForecast[it])
+            HourCard(todayForecast[it], selectedUnit)
         }
     }
 }

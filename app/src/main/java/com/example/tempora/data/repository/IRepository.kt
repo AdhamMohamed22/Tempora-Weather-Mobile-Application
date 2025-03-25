@@ -7,8 +7,8 @@ import kotlinx.coroutines.flow.Flow
 
 interface IRepository {
 
-    suspend fun getCurrentWeather(lat: Double,lon: Double,appid: String): Flow<CurrentWeather>
-    suspend fun getForecastWeather(lat: Double,lon: Double,appid: String): Flow<ForecastWeather>
+    suspend fun getCurrentWeather(lat: Double,lon: Double,appid: String,units: String?): Flow<CurrentWeather>
+    suspend fun getForecastWeather(lat: Double,lon: Double,appid: String,units: String?): Flow<ForecastWeather>
 
     suspend fun insertFavouriteLocation(favouriteLocation: FavouriteLocation)
     suspend fun getAllFavouriteLocations(): Flow<List<FavouriteLocation>>

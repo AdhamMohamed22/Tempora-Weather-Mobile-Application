@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -21,7 +20,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -36,7 +34,7 @@ import java.util.Locale
 @RequiresApi(Build.VERSION_CODES.O)
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun WeekDayCard(dayForecast: Item0) {
+fun WeekDayCard(dayForecast: Item0, selectedUnit: String) {
 
     val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
     val outputFormatter = DateTimeFormatter.ofPattern("EEEE", Locale.getDefault()) // "EEEE" gives full weekday name
@@ -46,7 +44,7 @@ fun WeekDayCard(dayForecast: Item0) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 5.dp),
+            .padding(horizontal = 18.dp, vertical = 5.dp),
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
         colors = CardDefaults.cardColors(containerColor = colorResource(R.color.secondaryColor).copy(alpha = 0.75f),
@@ -70,15 +68,15 @@ fun WeekDayCard(dayForecast: Item0) {
                 verticalArrangement = Arrangement.SpaceEvenly,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Temp: ${dayForecast.main.temp}", fontWeight = FontWeight.Medium, fontSize = 15.sp)
+                Text(text = "Temp: ${dayForecast.main.temp} $selectedUnit", fontWeight = FontWeight.Medium, fontSize = 15.sp)
 
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ){
-                    Text(text = "min: ${dayForecast.main.temp_min}  |", fontWeight = FontWeight.Normal, fontSize = 15.sp)
+                    Text(text = "min: ${dayForecast.main.temp_min} $selectedUnit  |", fontWeight = FontWeight.Normal, fontSize = 14.sp)
                     Spacer(Modifier.width(5.dp))
-                    Text(text = "max: ${dayForecast.main.temp_max}", fontWeight = FontWeight.Normal, fontSize = 15.sp)
+                    Text(text = "max: ${dayForecast.main.temp_max} $selectedUnit", fontWeight = FontWeight.Normal, fontSize = 14.sp)
                 }
             }
         }
@@ -87,14 +85,14 @@ fun WeekDayCard(dayForecast: Item0) {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun ListOf5WeekDaysCards(fiveDaysList: List<Item0>) {
+fun ListOf5WeekDaysCards(fiveDaysList: List<Item0>, selectedUnit: String) {
     LazyColumn(
         modifier = Modifier.wrapContentSize(Alignment.Center),
     )
     {
         items(fiveDaysList.size)
         {
-            WeekDayCard(fiveDaysList[it])
+            WeekDayCard(fiveDaysList[it], selectedUnit)
         }
     }
 }

@@ -27,7 +27,7 @@ fun SetupAppNavigation(
 
     val context = LocalContext.current
 
-    NavHost(navController = navController, startDestination = ScreenRoutes.Home.route)
+    NavHost(navController = navController, startDestination = ScreenRoutes.Settings.route)
     {
         composable(ScreenRoutes.Home.route) { HomeScreen(showFAB,location) }
         composable(ScreenRoutes.Favourites.route) { FavouritesScreen(showFAB,snackBarHostState) }

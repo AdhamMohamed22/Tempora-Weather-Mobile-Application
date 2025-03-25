@@ -11,13 +11,15 @@ interface ApiDataService {
     suspend fun getCurrentWeather(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
-        @Query("appid") appid: String
+        @Query("appid") appid: String,
+        @Query("units") units: String?
     ): Response<CurrentWeather>
 
     @GET("data/2.5/forecast")
     suspend fun getForecastWeather(
         @Query("lat") lat: Double,
         @Query("lon") lon: Double,
-        @Query("appid") appid: String
+        @Query("appid") appid: String,
+        @Query("units") units: String?
     ): Response<ForecastWeather>
 }

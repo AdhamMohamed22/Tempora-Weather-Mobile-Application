@@ -90,7 +90,6 @@ dependencies {
     //LiveData in Jetpack Compose
     val compose_version = "1.0.0"
     implementation ("androidx.compose.runtime:runtime-livedata:$compose_version")
-
     //Room
     val room_version = "2.6.1"
     implementation("androidx.room:room-runtime:$room_version")
@@ -98,4 +97,8 @@ dependencies {
     ksp("androidx.room:room-compiler:$room_version")
     // optional - Kotlin Extensions and Coroutines support for Room
     implementation("androidx.room:room-ktx:$room_version")
+
+    //Datastore Preferences
+    implementation("androidx.datastore:datastore-preferences:1.0.0")
+
 }

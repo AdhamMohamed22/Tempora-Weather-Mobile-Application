@@ -16,9 +16,9 @@ import com.example.tempora.R
 
 
 @Composable
-fun TemperatureDegree(degree: String) {
+fun TemperatureDegree(degree: String,unit: String) {
     Text(
-        text = "${degree}°K",
+        text = "$degree $unit",
         letterSpacing = 0.sp,
         style = TextStyle(
             brush = Brush.verticalGradient(

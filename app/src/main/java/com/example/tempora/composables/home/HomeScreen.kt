@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -74,9 +72,9 @@ fun HomeScreen(showFAB: MutableState<Boolean>, location: Location){
     }
 
     LaunchedEffect(Unit) {
-        viewModel.getCurrentWeather(location.latitude,location.longitude)
-        viewModel.getTodayForecastWeather(location.latitude,location.longitude)
-        viewModel.get5DaysForecastWeather(location.latitude,location.longitude)
+        viewModel.getCurrentWeather(location.latitude,location.longitude,context)
+        viewModel.getTodayForecastWeather(location.latitude,location.longitude,context)
+        viewModel.get5DaysForecastWeather(location.latitude,location.longitude,context)
     }
 
     when(currentWeatherState){
@@ -95,6 +93,8 @@ fun DisplayHomeScreen(currentWeather: CurrentWeather,viewModel: HomeScreenViewMo
     val todayForecastWeatherState by viewModel.todayForecastWeather.collectAsStateWithLifecycle()
     val daysForecastWeather by viewModel.daysForecastWeather.collectAsStateWithLifecycle()
 
+    val selectedUnit by viewModel.selectedUnit.collectAsStateWithLifecycle()
+
     Box(modifier = Modifier.fillMaxSize())
     {
         // Background Image
@@ -102,7 +102,9 @@ fun DisplayHomeScreen(currentWeather: CurrentWeather,viewModel: HomeScreenViewMo
             painter = painterResource(id = R.drawable.background),
             contentDescription = "HomeScreen Background",
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize().graphicsLayer(alpha = 0.8f)
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer(alpha = 0.8f)
         )
         // Foreground UI elements
         Column(
@@ -112,7 +114,7 @@ fun DisplayHomeScreen(currentWeather: CurrentWeather,viewModel: HomeScreenViewMo
             Spacer(modifier = Modifier.height(24.dp))
             Logo()
             WeatherStatusIcon(currentWeather.weather[0].description)
-            TemperatureDegree(currentWeather.main.temp.toString())
+            TemperatureDegree(currentWeather.main.temp.toString(),selectedUnit)
             WeatherDescription(currentWeather.weather[0].description)
             Spacer(modifier = Modifier.height(8.dp))
             City(currentWeather.name,currentWeather.sys.country)
@@ -124,7 +126,7 @@ fun DisplayHomeScreen(currentWeather: CurrentWeather,viewModel: HomeScreenViewMo
             when(todayForecastWeatherState){
                 is ForecastWeatherResponseState.Loading -> LoadingIndicator()
                 is ForecastWeatherResponseState.Failed -> Text("Failed !")
-                is ForecastWeatherResponseState.Success -> ListOfHourCards(todayForecast = (todayForecastWeatherState as ForecastWeatherResponseState.Success).forecastWeather)
+                is ForecastWeatherResponseState.Success -> ListOfHourCards(todayForecast = (todayForecastWeatherState as ForecastWeatherResponseState.Success).forecastWeather,selectedUnit)
             }
 
 
@@ -132,7 +134,7 @@ fun DisplayHomeScreen(currentWeather: CurrentWeather,viewModel: HomeScreenViewMo
             when(daysForecastWeather){
                 is ForecastWeatherResponseState.Loading -> LoadingIndicator()
                 is ForecastWeatherResponseState.Failed -> Text("Failed !")
-                is ForecastWeatherResponseState.Success -> ListOf5WeekDaysCards(fiveDaysList = (daysForecastWeather as ForecastWeatherResponseState.Success).forecastWeather)
+                is ForecastWeatherResponseState.Success -> ListOf5WeekDaysCards(fiveDaysList = (daysForecastWeather as ForecastWeatherResponseState.Success).forecastWeather,selectedUnit)
             }
 
         }
