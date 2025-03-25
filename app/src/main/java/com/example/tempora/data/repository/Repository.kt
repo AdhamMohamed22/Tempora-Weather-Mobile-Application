@@ -1,11 +1,14 @@
 package com.example.tempora.data.repository
 
+import com.example.tempora.data.local.WeatherLocalDataSource
 import com.example.tempora.data.models.CurrentWeather
+import com.example.tempora.data.models.FavouriteLocation
 import com.example.tempora.data.models.ForecastWeather
 import com.example.tempora.data.remote.WeatherRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 
-class Repository(private val remoteDataSource: WeatherRemoteDataSource) : IRepository{
+class Repository(private val remoteDataSource: WeatherRemoteDataSource,private val localDataSource: WeatherLocalDataSource) : IRepository{
+
     override suspend fun getCurrentWeather(lat: Double, lon: Double, appid: String): Flow<CurrentWeather> {
         return remoteDataSource.getCurrentWeather(lat,lon,appid)
     }
@@ -14,15 +17,27 @@ class Repository(private val remoteDataSource: WeatherRemoteDataSource) : IRepos
         return remoteDataSource.getForecastWeather(lat,lon,appid)
     }
 
+    override suspend fun insertFavouriteLocation(favouriteLocation: FavouriteLocation) {
+        localDataSource.insertFavouriteLocation(favouriteLocation)
+    }
+
+    override suspend fun getAllFavouriteLocations(): Flow<List<FavouriteLocation>> {
+        return localDataSource.getAllFavouriteLocations()
+    }
+
+    override suspend fun deleteFavouriteLocation(favouriteLocation: FavouriteLocation) {
+        localDataSource.deleteFavouriteLocation(favouriteLocation)
+    }
+
     companion object {
         @Volatile
         private var INSTANCE: Repository? = null
         fun getInstance(
-            //localDataSource: ProductLocalDataSource,
-            remoteDataSource: WeatherRemoteDataSource
+            remoteDataSource: WeatherRemoteDataSource,
+            localDataSource: WeatherLocalDataSource
         ): Repository {
             return INSTANCE ?: synchronized(this) {
-                val instance = Repository(remoteDataSource)
+                val instance = Repository(remoteDataSource,localDataSource)
                 INSTANCE = instance
                 instance
             }

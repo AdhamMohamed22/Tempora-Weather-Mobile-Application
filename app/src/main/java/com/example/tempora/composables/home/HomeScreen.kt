@@ -1,10 +1,10 @@
 package com.example.tempora.composables.home
 
+import android.location.Location
 import android.os.Build
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -26,7 +27,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -39,26 +39,31 @@ import com.example.tempora.composables.home.components.Logo
 import com.example.tempora.composables.home.components.TemperatureDegree
 import com.example.tempora.composables.home.components.WeatherDescription
 import com.example.tempora.composables.home.components.WeatherDetails
+import com.example.tempora.data.local.WeatherDatabase
+import com.example.tempora.data.local.WeatherLocalDataSource
 import com.example.tempora.data.models.CurrentWeather
 import com.example.tempora.data.remote.RetrofitHelper
 import com.example.tempora.data.remote.WeatherRemoteDataSource
 import com.example.tempora.data.repository.Repository
 import com.example.tempora.data.response_state.CurrentWeatherResponseState
 import com.example.tempora.data.response_state.ForecastWeatherResponseState
+import com.example.tempora.utils.LoadingIndicator
 
 
 @RequiresApi(Build.VERSION_CODES.O)
-@Preview
 @Composable
-fun HomeScreen(){
+fun HomeScreen(showFAB: MutableState<Boolean>, location: Location){
 
-    val currentWeatherFactory = HomeScreenViewModel.CurrentWeatherFactory(
-        Repository.getInstance(
-            WeatherRemoteDataSource(RetrofitHelper.retrofit)
-        ))
-    val viewModel: HomeScreenViewModel = viewModel(factory = currentWeatherFactory)
-
+    showFAB.value = false
     val context = LocalContext.current
+
+    val homeScreenViewModelFactory = HomeScreenViewModel.HomeScreenViewModelFactory(
+        Repository.getInstance(
+            WeatherRemoteDataSource(RetrofitHelper.retrofit),
+            WeatherLocalDataSource(WeatherDatabase.getInstance(context).getWeatherDao())
+        )
+    )
+    val viewModel: HomeScreenViewModel = viewModel(factory = homeScreenViewModelFactory)
 
     val currentWeatherState by viewModel.currentWeather.collectAsStateWithLifecycle()
 
@@ -69,9 +74,9 @@ fun HomeScreen(){
     }
 
     LaunchedEffect(Unit) {
-        viewModel.getCurrentWeather()
-        viewModel.getTodayForecastWeather()
-        viewModel.get5DaysForecastWeather()
+        viewModel.getCurrentWeather(location.latitude,location.longitude)
+        viewModel.getTodayForecastWeather(location.latitude,location.longitude)
+        viewModel.get5DaysForecastWeather(location.latitude,location.longitude)
     }
 
     when(currentWeatherState){
@@ -134,13 +139,3 @@ fun DisplayHomeScreen(currentWeather: CurrentWeather,viewModel: HomeScreenViewMo
     }
 }
 
-@Composable
-fun LoadingIndicator(){
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .wrapContentSize()
-    ) {
-        CircularProgressIndicator()
-    }
-}

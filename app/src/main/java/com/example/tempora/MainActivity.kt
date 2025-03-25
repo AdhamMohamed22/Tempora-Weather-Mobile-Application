@@ -1,15 +1,25 @@
 package com.example.tempora
 
+import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Location
+import android.location.LocationManager
+import android.os.Build
 import android.os.Bundle
+import android.os.Looper
+import android.provider.Settings
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
@@ -17,26 +27,26 @@ import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModelProvider
+import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.rememberNavController
+import com.example.tempora.composables.favourites.map.MapScreen
 import com.example.tempora.composables.splashscreen.SplashScreen
-import com.example.tempora.composables.home.HomeScreenViewModel
-import com.example.tempora.data.remote.RetrofitHelper
-import com.example.tempora.data.remote.WeatherRemoteDataSource
-import com.example.tempora.data.repository.Repository
 import com.example.tempora.utils.ScreenRoutes
 import com.example.tempora.utils.SetupAppNavigation
 import com.exyte.animatednavbar.AnimatedNavigationBar
@@ -44,30 +54,140 @@ import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
 import com.exyte.animatednavbar.animation.indendshape.Height
 import com.exyte.animatednavbar.animation.indendshape.shapeCornerRadius
 import com.exyte.animatednavbar.utils.noRippleClickable
+import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
+import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.Priority
+
+const val REQUEST_LOCATION_CODE = 2005
 
 class MainActivity : ComponentActivity() {
+
+    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+    private lateinit var locationState: MutableState<Location>
+
+    private lateinit var showFAB: MutableState<Boolean>
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
+
+            showFAB = remember { mutableStateOf(false) }
+
+            locationState = remember { mutableStateOf(Location(LocationManager.GPS_PROVIDER)) }
 
             var displaySplashScreen by remember { mutableStateOf(true) }
             if (displaySplashScreen){
                 SplashScreen(onComplete = {displaySplashScreen = false})
             } else {
-                MainScreen()
+                MainScreen(locationState.value,showFAB)
             }
         }
+    }
+
+
+    override fun onStart() {
+        super.onStart()
+        if (checkPermissions()) {
+            if (isLocationEnabled()) {
+                getFreshLocation()
+            } else {
+                enableLocationServices()
+            }
+        } else {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(
+                    android.Manifest.permission.ACCESS_FINE_LOCATION,
+                    android.Manifest.permission.ACCESS_COARSE_LOCATION
+                ), REQUEST_LOCATION_CODE
+            )
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray,
+        deviceId: Int
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults, deviceId)
+        if (requestCode == REQUEST_LOCATION_CODE) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getFreshLocation()
+            }
+        }
+    }
+
+    private fun checkPermissions(): Boolean {
+        return checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED
+                || checkSelfPermission(android.Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED
+    }
+
+
+    private fun isLocationEnabled(): Boolean {
+        val locationManager: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) || locationManager.isProviderEnabled(
+            LocationManager.NETWORK_PROVIDER
+        )
+    }
+
+    @SuppressLint("MissingPermission")
+    private fun getFreshLocation() {
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        fusedLocationProviderClient.requestLocationUpdates(
+            LocationRequest.Builder(0).apply {
+                setPriority(Priority.PRIORITY_HIGH_ACCURACY)
+            }.build(),
+            object : LocationCallback() {
+                override fun onLocationResult(location: LocationResult) {
+                    super.onLocationResult(location)
+                    locationState.value = location.lastLocation!!
+                }
+            }, Looper.myLooper()
+        )
+    }
+
+
+    private fun enableLocationServices() {
+        Toast.makeText(this, "Turn on Location", Toast.LENGTH_LONG).show()
+        val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+        startActivity(intent)
     }
 }
 
 
+@RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MainScreen() {
+fun MainScreen(location: Location, showFAB: MutableState<Boolean>) {
+
     val navController = rememberNavController()
     val navigationBarItems = remember { NavigationBarItems.values() }
     var selectedIndex by remember { mutableStateOf(0) }
+    val snackBarHostState = remember { SnackbarHostState() }
+
     Scaffold(
         modifier = Modifier.padding(all = 0.dp),
+        snackbarHost = {
+            SnackbarHost(snackBarHostState)
+        },
+        floatingActionButton = {
+            if(showFAB.value){
+                FloatingActionButton(
+                    onClick = {
+                        /* Handle FAB click */
+                        navController.navigate(ScreenRoutes.Map.route)
+                    },
+                    containerColor = colorResource(R.color.primaryColor),
+                    modifier = Modifier.offset(x = 5.dp, y = 10.dp)
+                ) {
+                    Icon(Icons.Default.Favorite, contentDescription = "Add To Favourites", tint = colorResource(R.color.white))
+                }
+            }
+        },
         bottomBar = {
             AnimatedNavigationBar(
                 modifier = Modifier.height(64.dp),
@@ -104,7 +224,7 @@ fun MainScreen() {
         }
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
-            SetupAppNavigation(navController)
+            SetupAppNavigation(navController,location,showFAB,snackBarHostState)
         }
     }
 }

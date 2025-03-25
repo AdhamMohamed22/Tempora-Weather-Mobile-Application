@@ -21,7 +21,7 @@ import com.example.tempora.R
 
 
 @Composable
-fun City(location: String,country: String) {
+fun City(location: String,country: String = "Default") {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
