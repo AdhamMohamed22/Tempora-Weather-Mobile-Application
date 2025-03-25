@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -46,12 +47,14 @@ import com.example.tempora.data.remote.WeatherRemoteDataSource
 import com.example.tempora.data.repository.Repository
 import com.example.tempora.data.response_state.CurrentWeatherResponseState
 import com.example.tempora.data.response_state.ForecastWeatherResponseState
+import com.example.tempora.utils.LoadingIndicator
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HomeScreen(location: Location){
+fun HomeScreen(showFAB: MutableState<Boolean>, location: Location){
 
+    showFAB.value = false
     val context = LocalContext.current
 
     val homeScreenViewModelFactory = HomeScreenViewModel.HomeScreenViewModelFactory(
@@ -136,13 +139,3 @@ fun DisplayHomeScreen(currentWeather: CurrentWeather,viewModel: HomeScreenViewMo
     }
 }
 
-@Composable
-fun LoadingIndicator(){
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .wrapContentSize()
-    ) {
-        CircularProgressIndicator()
-    }
-}

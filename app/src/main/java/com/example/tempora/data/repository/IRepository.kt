@@ -11,4 +11,6 @@ interface IRepository {
     suspend fun getForecastWeather(lat: Double,lon: Double,appid: String): Flow<ForecastWeather>
 
     suspend fun insertFavouriteLocation(favouriteLocation: FavouriteLocation)
+    suspend fun getAllFavouriteLocations(): Flow<List<FavouriteLocation>>
+    suspend fun deleteFavouriteLocation(favouriteLocation: FavouriteLocation)
 }

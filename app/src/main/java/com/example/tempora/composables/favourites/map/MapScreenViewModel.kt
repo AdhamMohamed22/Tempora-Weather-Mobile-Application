@@ -15,8 +15,11 @@ import com.google.android.libraries.places.api.model.RectangularBounds
 import com.google.android.libraries.places.api.net.FetchPlaceRequest
 import com.google.android.libraries.places.api.net.FindAutocompletePredictionsRequest
 import com.google.android.libraries.places.api.net.PlacesClient
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 
 class MapScreenViewModel(private val placesClient: PlacesClient,private val repository: Repository): ViewModel() {
@@ -36,6 +39,9 @@ class MapScreenViewModel(private val placesClient: PlacesClient,private val repo
 
     private val mutableSelectedLocation = MutableStateFlow<Location?>(null)
     val selectedLocation: StateFlow<Location?> get() = mutableSelectedLocation
+
+    private val mutableMessage = MutableSharedFlow<String>()
+    val message = mutableMessage.asSharedFlow()
 
     //private val locationBias: LocationBias = RectangularBounds.newInstance(LatLng(39.9, -105.5), // SW lat, lng LatLng(40.1, -105.0)  // NE lat, lng)
 
@@ -100,10 +106,15 @@ class MapScreenViewModel(private val placesClient: PlacesClient,private val repo
         }
     }
 
-    fun insertFavouriteLocation(lat: Double, lon: Double) {
-        val favouriteLocation = FavouriteLocation(latitude = lat, longitude = lon)
-        viewModelScope.launch {
-            repository.insertFavouriteLocation(favouriteLocation)
+    fun insertFavouriteLocation(lat: Double, lon: Double, address: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val favouriteLocation = FavouriteLocation(latitude = lat, longitude = lon, country = address)
+                repository.insertFavouriteLocation(favouriteLocation)
+                mutableMessage.emit("Location Added Successfully!")
+            } catch (ex: Exception){
+                mutableMessage.emit("Couldn't Add Location To Favourites ${ex.message}")
+            }
         }
     }
 

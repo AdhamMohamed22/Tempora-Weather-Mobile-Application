@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.tempora.data.models.FavouriteLocation
 
-@Database(entities = [FavouriteLocation::class], version = 2)
+@Database(entities = [FavouriteLocation::class], version = 3)
 abstract class WeatherDatabase : RoomDatabase(){
 
     abstract fun getWeatherDao(): WeatherDao

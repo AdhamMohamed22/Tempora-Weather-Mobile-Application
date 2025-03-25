@@ -21,6 +21,14 @@ class Repository(private val remoteDataSource: WeatherRemoteDataSource,private v
         localDataSource.insertFavouriteLocation(favouriteLocation)
     }
 
+    override suspend fun getAllFavouriteLocations(): Flow<List<FavouriteLocation>> {
+        return localDataSource.getAllFavouriteLocations()
+    }
+
+    override suspend fun deleteFavouriteLocation(favouriteLocation: FavouriteLocation) {
+        localDataSource.deleteFavouriteLocation(favouriteLocation)
+    }
+
     companion object {
         @Volatile
         private var INSTANCE: Repository? = null

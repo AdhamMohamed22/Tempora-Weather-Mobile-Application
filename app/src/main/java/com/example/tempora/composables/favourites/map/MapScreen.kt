@@ -1,6 +1,6 @@
 package com.example.tempora.composables.favourites.map
 
-import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.AlertDialogDefaults.shape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -18,10 +17,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -30,9 +30,11 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tempora.R
 import com.example.tempora.data.local.WeatherDatabase
 import com.example.tempora.data.local.WeatherLocalDataSource
+import com.example.tempora.data.models.FavouriteLocation
 import com.example.tempora.data.remote.RetrofitHelper
 import com.example.tempora.data.remote.WeatherRemoteDataSource
 import com.example.tempora.data.repository.Repository
+import com.example.tempora.utils.getAddressFromLocation
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -48,10 +50,13 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 
 @Composable
-fun MapScreen(context: Context) {
+fun MapScreen(showFAB: MutableState<Boolean>) {
+
+    showFAB.value = false
+    val context = LocalContext.current
 
     // Initialize Places API (outside ViewModel)
-    Places.initializeWithNewPlacesApiEnabled(context, "AIzaSyCaj10hgcwGaosoYRyv79ppLviFJ9eMNmM")
+    Places.initializeWithNewPlacesApiEnabled(context, "AIzaSyBvhSpyZXwUDq2gXWWLxKrdW8w9TOudDoU")
     val placesClient: PlacesClient = Places.createClient(context)
 
     // Create ViewModel with custom factory
@@ -75,6 +80,12 @@ fun MapScreen(context: Context) {
         )
     )
     val cameraPositionState = rememberCameraPositionState{position = CameraPosition.fromLatLngZoom(markerState.position, 10f)}
+
+    LaunchedEffect(Unit) {
+        viewModel.message.collect {
+            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+        }
+    }
 
     LaunchedEffect(selectedLocation) {
         selectedLocation?.let {
@@ -111,6 +122,7 @@ fun MapScreen(context: Context) {
                 .fillMaxWidth()
                 .padding(16.dp),
             searchText = searchText,
+            textFieldMaxLines = 1,
             predictions = predictions.map {
                 AutocompletePlace(
                     placeId = it.placeId,
@@ -127,6 +139,8 @@ fun MapScreen(context: Context) {
 
 
         selectedLocation?.let { location ->
+            val favouriteLocation = FavouriteLocation(location.latitude,location.longitude,null)
+            val address = getAddressFromLocation(favouriteLocation)
             Card(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -140,14 +154,14 @@ fun MapScreen(context: Context) {
                     modifier = Modifier.padding(16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    Text(text = "Selected Location", style = MaterialTheme.typography.titleMedium, color = colorResource(R.color.black), fontWeight = FontWeight.Bold)
+                    Text(text = address, style = MaterialTheme.typography.titleMedium, color = colorResource(R.color.black), fontWeight = FontWeight.Bold)
                     Spacer(modifier = Modifier.height(8.dp))
                     Text(text = "Latitude: ${location.latitude}")
                     Text(text = "Longitude: ${location.longitude}")
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Button(
-                        onClick = { viewModel.insertFavouriteLocation(selectedLocation!!.latitude, selectedLocation!!.longitude) },
+                        onClick = { viewModel.insertFavouriteLocation(selectedLocation!!.latitude, selectedLocation!!.longitude, address) },
                         colors = ButtonDefaults.buttonColors(colorResource(R.color.primaryColor)),
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.fillMaxWidth()
