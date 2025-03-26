@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.tempora.composables.alarms.AlarmsScreen
+import com.example.tempora.composables.favourites.FavouritesDetailsScreen
 import com.example.tempora.composables.favourites.FavouritesScreen
 import com.example.tempora.composables.favourites.map.MapScreen
 import com.example.tempora.composables.home.HomeScreen
@@ -30,9 +31,16 @@ fun SetupAppNavigation(
     NavHost(navController = navController, startDestination = ScreenRoutes.Home.route)
     {
         composable(ScreenRoutes.Home.route) { HomeScreen(showFAB,location) }
-        composable(ScreenRoutes.Favourites.route) { FavouritesScreen(showFAB,snackBarHostState) }
+        composable(ScreenRoutes.Favourites.route) { FavouritesScreen(showFAB, snackBarHostState, navigationAction = { favouriteLocation ->  navController.navigate("FavouritesDetailsScreen/${favouriteLocation.latitude}/${favouriteLocation.longitude}") }) }
         composable(ScreenRoutes.Map.route) { MapScreen(showFAB) }
         composable(ScreenRoutes.Alarms.route) { AlarmsScreen(showFAB) }
         composable(ScreenRoutes.Settings.route) { SettingsScreen(showFAB) }
+
+        composable("FavouritesDetailsScreen/{lat}/{lon}") { backStackEntry ->
+            val lat = backStackEntry.arguments?.getString("lat")?.toDoubleOrNull() ?: 0.0
+            val lon = backStackEntry.arguments?.getString("lon")?.toDoubleOrNull() ?: 0.0
+            FavouritesDetailsScreen(showFAB, lat, lon)
+        }
+
     }
 }

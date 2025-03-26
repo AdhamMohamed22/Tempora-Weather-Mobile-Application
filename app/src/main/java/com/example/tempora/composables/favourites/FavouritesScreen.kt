@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,6 +31,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
@@ -51,7 +54,7 @@ import com.example.tempora.composables.settings.utils.formatNumberBasedOnLanguag
 
 
 @Composable
-fun FavouritesScreen(showFAB: MutableState<Boolean>, snackBarHostState: SnackbarHostState) {
+fun FavouritesScreen(showFAB: MutableState<Boolean>, snackBarHostState: SnackbarHostState, navigationAction: (FavouriteLocation) -> Unit) {
 
     showFAB.value = true
     val context = LocalContext.current
@@ -83,15 +86,16 @@ fun FavouritesScreen(showFAB: MutableState<Boolean>, snackBarHostState: Snackbar
         is FavouriteLocationsResponseState.Success -> DisplayFavouritesScreen(
             viewModel = viewModel,
             favouritesLocationsList = (favouriteLocationState as FavouriteLocationsResponseState.Success).favouriteLocations,
-            action = { viewModel.deleteFavouriteLocation(it) },
-            snackBarHostState = snackBarHostState
+            deleteAction = { viewModel.deleteFavouriteLocation(it) },
+            snackBarHostState = snackBarHostState,
+            navigationAction = { navigationAction(it) }
         )
     }
 }
 
 @SuppressLint("SuspiciousIndentation")
 @Composable
-fun DisplayFavouritesScreen(viewModel: FavouritesScreenViewModel, favouritesLocationsList: List<FavouriteLocation>, action: (FavouriteLocation) -> Unit, snackBarHostState: SnackbarHostState){
+fun DisplayFavouritesScreen(viewModel: FavouritesScreenViewModel, favouritesLocationsList: List<FavouriteLocation>, deleteAction: (FavouriteLocation) -> Unit, snackBarHostState: SnackbarHostState, navigationAction: (FavouriteLocation) -> Unit){
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
 
@@ -130,13 +134,17 @@ fun DisplayFavouritesScreen(viewModel: FavouritesScreenViewModel, favouritesLoca
                 fontWeight = FontWeight.Bold
             )
         } else {
-                ListOfFavouriteCards(favouritesLocationsList,action)
+                ListOfFavouriteCards(favouritesLocationsList,deleteAction,navigationAction)
             }
         }
 }
 
 @Composable
-fun FavouriteLocationCard(favouriteLocation: FavouriteLocation, action: (FavouriteLocation)-> Unit) {
+fun FavouriteLocationCard(
+    favouriteLocation: FavouriteLocation,
+    deleteAction: (FavouriteLocation) -> Unit,
+    navigationAction: (FavouriteLocation) -> Unit
+) {
     /*val address = getAddressFromLocation(favouriteLocation)*/
     Card(
         modifier = Modifier
@@ -144,7 +152,8 @@ fun FavouriteLocationCard(favouriteLocation: FavouriteLocation, action: (Favouri
             .fillMaxWidth(),
         elevation = CardDefaults.cardElevation(8.dp),
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(colorResource(R.color.white))
+        colors = CardDefaults.cardColors(colorResource(R.color.white)),
+        onClick = { navigationAction(favouriteLocation) }
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -162,7 +171,7 @@ fun FavouriteLocationCard(favouriteLocation: FavouriteLocation, action: (Favouri
             Spacer(modifier = Modifier.height(12.dp))
 
             Button(
-                onClick = { action(favouriteLocation) },
+                onClick = { deleteAction(favouriteLocation) },
                 colors = ButtonDefaults.buttonColors(colorResource(R.color.primaryColor)),
                 shape = RoundedCornerShape(8.dp),
                 modifier = Modifier.fillMaxWidth()
@@ -180,12 +189,27 @@ fun FavouriteLocationCard(favouriteLocation: FavouriteLocation, action: (Favouri
 
 
 @Composable
-fun ListOfFavouriteCards(favouritesLocationsList: List<FavouriteLocation>, action: (FavouriteLocation) -> Unit){
-    LazyColumn(modifier = Modifier.wrapContentSize(Alignment.Center))
+fun ListOfFavouriteCards(
+    favouritesLocationsList: List<FavouriteLocation>,
+    deleteAction: (FavouriteLocation) -> Unit,
+    navigationAction: (FavouriteLocation) -> Unit
+){
+    Box(modifier = Modifier.fillMaxSize())
     {
-        items(favouritesLocationsList.size)
+        Image(
+            painter = painterResource(id = R.drawable.settingsbackground),
+            contentDescription = "SettingsScreen Background",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer(alpha = 0.8f)
+        )
+        LazyColumn(modifier = Modifier.wrapContentSize(Alignment.Center).padding(vertical = 32.dp))
         {
-            FavouriteLocationCard(favouritesLocationsList[it],action)
+            items(favouritesLocationsList.size)
+            {
+                FavouriteLocationCard(favouritesLocationsList[it],deleteAction,navigationAction)
+            }
         }
     }
 }
