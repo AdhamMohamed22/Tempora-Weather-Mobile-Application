@@ -12,20 +12,18 @@ import androidx.compose.ui.unit.dp
 import com.example.tempora.R
 
 @Composable
-fun WeatherStatusIcon(weatherDescription: String) {
-    val image = when (weatherDescription.lowercase().trim()) {
-        "clear sky", "clear" -> R.drawable.clearsky
-        "few clouds" -> R.drawable.fewclouds
-        "scattered clouds" -> R.drawable.scatteredclouds
-        "broken clouds" -> R.drawable.brokenclouds
-        "overcast clouds" -> R.drawable.overcastclouds
-        "shower rain", "light rain", "moderate rain", "heavy rain", "very heavy rain", "extreme rain" , "freezing rain", "rain" -> R.drawable.rain
-        "light snow", "heavy snow", "blizzard" , "snow" -> R.drawable.snow
-        "thunderstorm", "thunderstorm with rain", "thunderstorm with snow" -> R.drawable.thunderstorm
-        "mist", "fog", "haze", "smoke" -> R.drawable.haze
-        "dust", "sand" -> R.drawable.dust
-        "tornado", "squalls" -> R.drawable.tornado
-        else -> R.drawable.weather_status
+fun WeatherStatusIcon(weatherIconCode: String) {
+    val image = when (weatherIconCode) {
+        "01d", "01n"-> R.drawable.clearsky // Clear sky
+        "02d", "02n" -> R.drawable.fewclouds // Few clouds
+        "03d", "03n" -> R.drawable.scatteredclouds // Scattered clouds
+        "04d", "04n" -> R.drawable.brokenclouds // Broken clouds
+        "09d", "09n" -> R.drawable.rain // Shower rain
+        "10d", "10n" -> R.drawable.rain // Rain (day & night)
+        "11d", "11n" -> R.drawable.thunderstorm // Thunderstorm
+        "13d", "13n" -> R.drawable.snow // Snow
+        "50d", "50n" -> R.drawable.haze // Mist, fog, haze
+        else -> R.drawable.weather_status // Default icon
     }
 
     Image(

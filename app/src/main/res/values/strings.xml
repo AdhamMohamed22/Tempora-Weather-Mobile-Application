@@ -1,7 +1,5 @@
 <resources>
-    <string name="app_name">TEMPORA</string>
-    <string name="title_activity_splash_screen">SplashScreenActivity</string>
-    <string name="title_activity_location_picker">LocationPickerActivity</string>
+    <string name="app_name" translatable="false">TEMPORA</string>
     <string name="settings">Settings</string>
     <string name="language">Language</string>
     <string name="location">Location</string>
@@ -16,4 +14,18 @@
     <string name="fahrenheit_f">Fahrenheit °F</string>
     <string name="meter_sec">Meters/Sec</string>
     <string name="mile_hour">Miles/Hour</string>
+    <string name="cloud">Cloud</string>
+    <string name="humidity">Humidity</string>
+    <string name="wind">Wind</string>
+    <string name="pressure">Pressure</string>
+    <string name="today_s_hourly_temperature">Today\'s Hourly Temperature</string>
+    <string name="upcoming_5_days_temperature">Upcoming 5 Days Temperature</string>
+    <string name="min">min: %1$s %2$s  |</string>
+    <string name="max">max: %1$s %2$s</string>
+    <string name="temp">Temp: %1$s %2$s</string>
+    <string name="undo">Undo</string>
+    <string name="nothing_has_been_added_to_favourites_yet">Nothing Has Been Added To Favourites Yet!</string>
+    <string name="latitude">Latitude: %1$s</string>
+    <string name="longitude">Longitude: %1$s</string>
+    <string name="delete">Delete</string>
 </resources>

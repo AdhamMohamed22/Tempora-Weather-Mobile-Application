@@ -23,9 +23,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -42,6 +39,14 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tempora.R
+import com.example.tempora.composables.settings.utils.getLanguage
+import com.example.tempora.composables.settings.utils.getLanguageValue
+import com.example.tempora.composables.settings.utils.getLocation
+import com.example.tempora.composables.settings.utils.getLocationValue
+import com.example.tempora.composables.settings.utils.getTemperatureUnit
+import com.example.tempora.composables.settings.utils.getTemperatureValue
+import com.example.tempora.composables.settings.utils.getWindSpeedUnit
+import com.example.tempora.composables.settings.utils.getWindSpeedValue
 
 @Composable
 fun SettingsScreen(showFAB: MutableState<Boolean>) {
@@ -92,16 +97,19 @@ fun SettingsScreen(showFAB: MutableState<Boolean>) {
                 title = stringResource(R.string.language),
                 icon = painterResource(R.drawable.language),
                 options = listOf(stringResource(R.string.english), stringResource(R.string.arabic)),
-                selectedOption = selectedLanguageState,
-                onOptionSelected = { viewModel.savePreference(PreferencesManager.LANGUAGE_KEY,it)}
+                selectedOption = getLanguage(selectedLanguageState),
+                onOptionSelected = {
+                    viewModel.savePreference(PreferencesManager.LANGUAGE_KEY, getLanguageValue(it),context)}
             )
 
             SettingCard(
                 title = stringResource(R.string.location),
                 icon = painterResource(R.drawable.location),
                 options = listOf(stringResource(R.string.gps), stringResource(R.string.map)),
-                selectedOption = selectedLocationState,
-                onOptionSelected = { viewModel.savePreference(PreferencesManager.LOCATION_KEY,it)}
+                selectedOption = getLocation(selectedLocationState),
+                onOptionSelected = {
+                    viewModel.savePreference(PreferencesManager.LOCATION_KEY, getLocationValue(it),context)
+                }
             )
 
             SettingCard(
@@ -110,8 +118,9 @@ fun SettingsScreen(showFAB: MutableState<Boolean>) {
                 options = listOf(stringResource(R.string.kelvin_k),
                     stringResource(R.string.celsius_c), stringResource(R.string.fahrenheit_f)
                 ),
-                selectedOption = selectedTemperatureUnitState,
-                onOptionSelected = { viewModel.savePreference(PreferencesManager.TEMPERATURE_UNIT_KEY,it)}
+                selectedOption = getTemperatureUnit(selectedTemperatureUnitState),
+                onOptionSelected = {
+                    viewModel.savePreference(PreferencesManager.TEMPERATURE_UNIT_KEY, getTemperatureValue(it),context)}
             )
 
             SettingCard(
@@ -119,8 +128,10 @@ fun SettingsScreen(showFAB: MutableState<Boolean>) {
                 icon = painterResource(R.drawable.windspeed),
                 options = listOf(stringResource(R.string.meter_sec),
                     stringResource(R.string.mile_hour)),
-                selectedOption = selectedWindSpeedUnitState,
-                onOptionSelected = { viewModel.savePreference(PreferencesManager.WIND_SPEED_UNIT_KEY,it)}
+                selectedOption = getWindSpeedUnit(selectedWindSpeedUnitState),
+                onOptionSelected = {
+                    viewModel.savePreference(PreferencesManager.WIND_SPEED_UNIT_KEY, getWindSpeedValue(it),context)
+                }
             )
         }
     }

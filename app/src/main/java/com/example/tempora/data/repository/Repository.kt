@@ -9,12 +9,12 @@ import kotlinx.coroutines.flow.Flow
 
 class Repository(private val remoteDataSource: WeatherRemoteDataSource,private val localDataSource: WeatherLocalDataSource) : IRepository{
 
-    override suspend fun getCurrentWeather(lat: Double, lon: Double, appid: String, units: String?): Flow<CurrentWeather> {
-        return remoteDataSource.getCurrentWeather(lat,lon,appid,units)
+    override suspend fun getCurrentWeather(lat: Double, lon: Double, appid: String, units: String?,language: String): Flow<CurrentWeather> {
+        return remoteDataSource.getCurrentWeather(lat,lon,appid,units,language)
     }
 
-    override suspend fun getForecastWeather(lat: Double, lon: Double, appid: String, units: String?): Flow<ForecastWeather> {
-        return remoteDataSource.getForecastWeather(lat,lon,appid,units)
+    override suspend fun getForecastWeather(lat: Double, lon: Double, appid: String, units: String?,language: String): Flow<ForecastWeather> {
+        return remoteDataSource.getForecastWeather(lat,lon,appid,units,language)
     }
 
     override suspend fun insertFavouriteLocation(favouriteLocation: FavouriteLocation) {

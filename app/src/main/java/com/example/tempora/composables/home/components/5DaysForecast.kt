@@ -20,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -27,6 +28,8 @@ import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.tempora.R
 import com.example.tempora.data.models.Item0
+import com.example.tempora.composables.settings.utils.formatNumberBasedOnLanguage
+import com.example.tempora.composables.settings.utils.formatTemperatureUnitBasedOnLanguage
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -68,15 +71,23 @@ fun WeekDayCard(dayForecast: Item0, selectedUnit: String) {
                 verticalArrangement = Arrangement.SpaceEvenly,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = "Temp: ${dayForecast.main.temp} $selectedUnit", fontWeight = FontWeight.Medium, fontSize = 15.sp)
+                Text(text = stringResource(R.string.temp, formatNumberBasedOnLanguage(dayForecast.main.temp.toString()), formatTemperatureUnitBasedOnLanguage(selectedUnit)), fontWeight = FontWeight.Medium, fontSize = 15.sp)
 
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
                 ){
-                    Text(text = "min: ${dayForecast.main.temp_min} $selectedUnit  |", fontWeight = FontWeight.Normal, fontSize = 14.sp)
+                    Text(text = stringResource(
+                        R.string.min,
+                        formatNumberBasedOnLanguage(dayForecast.main.temp_min.toString()),
+                        formatTemperatureUnitBasedOnLanguage(selectedUnit)
+                    ), fontWeight = FontWeight.Normal, fontSize = 14.sp)
                     Spacer(Modifier.width(5.dp))
-                    Text(text = "max: ${dayForecast.main.temp_max} $selectedUnit", fontWeight = FontWeight.Normal, fontSize = 14.sp)
+                    Text(text = stringResource(
+                        R.string.max,
+                        formatNumberBasedOnLanguage(dayForecast.main.temp_max.toString()),
+                        formatTemperatureUnitBasedOnLanguage(selectedUnit)
+                    ), fontWeight = FontWeight.Normal, fontSize = 14.sp)
                 }
             }
         }

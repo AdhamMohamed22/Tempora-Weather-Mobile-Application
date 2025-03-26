@@ -23,9 +23,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.tempora.R
+import com.example.tempora.composables.settings.utils.formatNumberBasedOnLanguage
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -49,7 +51,7 @@ fun WeatherDetails(
 
     Column(horizontalAlignment = Alignment.CenterHorizontally) {
         Text(
-            text = formattedTime,
+            text = formatNumberBasedOnLanguage(formattedTime),
             color = colorResource(R.color.white),
             style = MaterialTheme.typography.titleMedium,
             fontWeight = FontWeight.Bold
@@ -65,8 +67,8 @@ fun WeatherDetails(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 WeatherDetailItem(
                     icon = R.drawable.clouds,
-                    label = "Cloud",
-                    value = "$cloud%"
+                    label = stringResource(R.string.cloud),
+                    value = formatNumberBasedOnLanguage("$cloud%")
                 )
                 Spacer(modifier = Modifier.height(12.dp))
                 Divider(
@@ -79,8 +81,8 @@ fun WeatherDetails(
                 Spacer(modifier = Modifier.height(12.dp))
                 WeatherDetailItem(
                     icon = R.drawable.humidity,
-                    label = "Humidity",
-                    value = "$humidity%"
+                    label = stringResource(R.string.humidity),
+                    value = formatNumberBasedOnLanguage("$humidity%")
                 )
             }
 
@@ -92,7 +94,7 @@ fun WeatherDetails(
             )
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                WeatherDetailItem(icon = R.drawable.wind, label = "Wind", value = windSpeed)
+                WeatherDetailItem(icon = R.drawable.wind, label = stringResource(R.string.wind), value = formatNumberBasedOnLanguage(windSpeed))
                 Spacer(modifier = Modifier.height(12.dp))
                 Divider(
                     modifier = Modifier
@@ -102,7 +104,7 @@ fun WeatherDetails(
                     color = Color.White.copy(alpha = 0.4f)
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                WeatherDetailItem(icon = R.drawable.pressure, label = "Pressure", value = pressure)
+                WeatherDetailItem(icon = R.drawable.pressure, label = stringResource(R.string.pressure), value = formatNumberBasedOnLanguage(pressure))
             }
         }
     }

@@ -45,10 +45,11 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.rememberNavController
-import com.example.tempora.composables.favourites.map.MapScreen
+import com.example.tempora.composables.settings.utils.LocalizationHelper
+import com.example.tempora.composables.settings.PreferencesManager
 import com.example.tempora.composables.splashscreen.SplashScreen
-import com.example.tempora.utils.ScreenRoutes
-import com.example.tempora.utils.SetupAppNavigation
+import com.example.tempora.utils.navigation.ScreenRoutes
+import com.example.tempora.utils.navigation.SetupAppNavigation
 import com.exyte.animatednavbar.AnimatedNavigationBar
 import com.exyte.animatednavbar.animation.balltrajectory.Parabolic
 import com.exyte.animatednavbar.animation.indendshape.Height
@@ -60,6 +61,8 @@ import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 const val REQUEST_LOCATION_CODE = 2005
 
@@ -73,6 +76,15 @@ class MainActivity : ComponentActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val preferencesManager = PreferencesManager.getInstance(this)
+        // Use runBlocking to get the saved language synchronously
+        val savedLanguage = runBlocking {
+            preferencesManager.getPreference(PreferencesManager.LANGUAGE_KEY, "English").first()
+        }
+        val languageCode = if (savedLanguage == "Arabic") "ar" else "en"
+        LocalizationHelper.setLocale(this, languageCode)
+
         setContent {
 
             showFAB = remember { mutableStateOf(false) }
@@ -230,8 +242,8 @@ fun MainScreen(location: Location, showFAB: MutableState<Boolean>) {
 }
 
 enum class NavigationBarItems(val icon: ImageVector,val screen: ScreenRoutes){
-    Home(icon = Icons.Default.Home,ScreenRoutes.Home),
-    Favourites(icon = Icons.Default.Favorite,ScreenRoutes.Favourites),
-    Alerts(icon = Icons.Default.Notifications,ScreenRoutes.Alarms),
-    Settings(icon = Icons.Default.Settings,ScreenRoutes.Settings),
+    Home(icon = Icons.Default.Home, ScreenRoutes.Home),
+    Favourites(icon = Icons.Default.Favorite, ScreenRoutes.Favourites),
+    Alerts(icon = Icons.Default.Notifications, ScreenRoutes.Alarms),
+    Settings(icon = Icons.Default.Settings, ScreenRoutes.Settings),
 }

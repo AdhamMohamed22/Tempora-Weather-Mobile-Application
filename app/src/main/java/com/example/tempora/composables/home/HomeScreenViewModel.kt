@@ -55,15 +55,17 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
 
     fun getCurrentWeather(lat: Double,lon: Double,context: Context){
         viewModelScope.launch(Dispatchers.IO){
-            //val preferencesManager: PreferencesManager = PreferencesManager(context)
             val selectedUnit = PreferencesManager.getInstance(context).getPreference(PreferencesManager.TEMPERATURE_UNIT_KEY,"Kelvin °K").first()
             val units = getTemperatureUnit(selectedUnit)
+
+            val selectedLanguage = PreferencesManager.getInstance(context).getPreference(PreferencesManager.LANGUAGE_KEY, "English").first()
+            var language = if(selectedLanguage == "Arabic") "ar" else "en"
 
             // Store the selected unit symbol
             mutableSelectedUnit.value = getTemperatureSymbol(selectedUnit)
 
             try {
-                val result = repository.getCurrentWeather(lat,lon,appid = "52eeded717ded0ae2029412d4f1ae35f",units)
+                val result = repository.getCurrentWeather(lat,lon,appid = "52eeded717ded0ae2029412d4f1ae35f",units,language)
                 result
                     .catch {
                         ex -> mutableCurrentWeather.value = CurrentWeatherResponseState.Failed(ex)
@@ -83,8 +85,11 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
             val selectedUnit = PreferencesManager.getInstance(context).getPreference(PreferencesManager.TEMPERATURE_UNIT_KEY,"Kelvin °K").first()
             val units = getTemperatureUnit(selectedUnit)
 
+            val selectedLanguage = PreferencesManager.getInstance(context).getPreference(PreferencesManager.LANGUAGE_KEY, "English").first()
+            var language = if(selectedLanguage == "Arabic") "ar" else "en"
+
             try {
-                val result = repository.getForecastWeather(lat,lon,appid = "52eeded717ded0ae2029412d4f1ae35f",units)
+                val result = repository.getForecastWeather(lat,lon,appid = "52eeded717ded0ae2029412d4f1ae35f",units,language)
                 result
                     .catch {
                         ex -> mutableTodayForecastWeather.value = ForecastWeatherResponseState.Failed(ex)
@@ -111,8 +116,11 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
             val selectedUnit = PreferencesManager.getInstance(context).getPreference(PreferencesManager.TEMPERATURE_UNIT_KEY,"Kelvin °K").first()
             val units = getTemperatureUnit(selectedUnit)
 
+            val selectedLanguage = PreferencesManager.getInstance(context).getPreference(PreferencesManager.LANGUAGE_KEY, "English").first()
+            var language = if(selectedLanguage == "Arabic") "ar" else "en"
+
             try {
-                val result = repository.getForecastWeather(lat,lon,appid = "52eeded717ded0ae2029412d4f1ae35f",units)
+                val result = repository.getForecastWeather(lat,lon,appid = "52eeded717ded0ae2029412d4f1ae35f",units,language)
                 result
                     .catch {
                             ex -> mutable5DaysForecastWeather.value = ForecastWeatherResponseState.Failed(ex)

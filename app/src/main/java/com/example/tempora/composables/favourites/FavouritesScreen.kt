@@ -33,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -46,7 +47,7 @@ import com.example.tempora.data.remote.WeatherRemoteDataSource
 import com.example.tempora.data.repository.Repository
 import com.example.tempora.data.response_state.FavouriteLocationsResponseState
 import com.example.tempora.utils.LoadingIndicator
-import com.example.tempora.utils.getAddressFromLocation
+import com.example.tempora.composables.settings.utils.formatNumberBasedOnLanguage
 
 
 @Composable
@@ -98,7 +99,7 @@ fun DisplayFavouritesScreen(viewModel: FavouritesScreenViewModel, favouritesLoca
         viewModel.message.collect {
             val snackBarResult = snackBarHostState.showSnackbar(
                 message = it,
-                actionLabel = "Undo",
+                actionLabel = context.getString(R.string.undo),
                 duration = SnackbarDuration.Short
             )
             if (snackBarResult == SnackbarResult.ActionPerformed) {
@@ -123,7 +124,7 @@ fun DisplayFavouritesScreen(viewModel: FavouritesScreenViewModel, favouritesLoca
             )
             Spacer(Modifier.height(20.dp))
             Text(
-                text = "Nothing Has Been Added To Favourites Yet!",
+                text = stringResource(R.string.nothing_has_been_added_to_favourites_yet),
                 style = MaterialTheme.typography.titleMedium,
                 color = colorResource(R.color.primaryColor),
                 fontWeight = FontWeight.Bold
@@ -156,8 +157,8 @@ fun FavouriteLocationCard(favouriteLocation: FavouriteLocation, action: (Favouri
                 fontWeight = FontWeight.Bold
             )
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Latitude: ${favouriteLocation.latitude}")
-            Text(text = "Longitude: ${favouriteLocation.longitude}")
+            Text(text = stringResource(R.string.latitude, formatNumberBasedOnLanguage(favouriteLocation.latitude.toString())))
+            Text(text = stringResource(R.string.longitude, formatNumberBasedOnLanguage(favouriteLocation.longitude.toString())))
             Spacer(modifier = Modifier.height(12.dp))
 
             Button(
@@ -167,7 +168,7 @@ fun FavouriteLocationCard(favouriteLocation: FavouriteLocation, action: (Favouri
                 modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
-                    text = "Delete",
+                    text = stringResource(R.string.delete),
                     style = MaterialTheme.typography.titleMedium,
                     color = colorResource(R.color.white),
                     fontWeight = FontWeight.Bold

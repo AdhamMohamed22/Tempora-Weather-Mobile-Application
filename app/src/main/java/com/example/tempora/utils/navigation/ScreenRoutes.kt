@@ -1,6 +1,5 @@
-package com.example.tempora.utils
+package com.example.tempora.utils.navigation
 
-import android.content.Context
 import kotlinx.serialization.Serializable
 
 

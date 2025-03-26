@@ -24,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -113,7 +114,7 @@ fun DisplayHomeScreen(currentWeather: CurrentWeather,viewModel: HomeScreenViewMo
         ) {
             Spacer(modifier = Modifier.height(24.dp))
             Logo()
-            WeatherStatusIcon(currentWeather.weather[0].description)
+            WeatherStatusIcon(currentWeather.weather[0].icon)
             TemperatureDegree(currentWeather.main.temp.toString(),selectedUnit)
             WeatherDescription(currentWeather.weather[0].description)
             Spacer(modifier = Modifier.height(8.dp))
@@ -122,7 +123,7 @@ fun DisplayHomeScreen(currentWeather: CurrentWeather,viewModel: HomeScreenViewMo
             WeatherDetails(currentWeather.clouds.all, currentWeather.main.humidity, currentWeather.wind.speed.toString(), currentWeather.main.pressure.toString(), currentWeather.dt.toLong())
 
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Today's Hourly Temperature", style = MaterialTheme.typography.titleMedium, color = colorResource(R.color.white), fontWeight = FontWeight.Bold)
+            Text(text = stringResource(R.string.today_s_hourly_temperature), style = MaterialTheme.typography.titleMedium, color = colorResource(R.color.white), fontWeight = FontWeight.Bold)
             when(todayForecastWeatherState){
                 is ForecastWeatherResponseState.Loading -> LoadingIndicator()
                 is ForecastWeatherResponseState.Failed -> Text("Failed !")
@@ -130,7 +131,7 @@ fun DisplayHomeScreen(currentWeather: CurrentWeather,viewModel: HomeScreenViewMo
             }
 
 
-            Text(text = "Upcoming 5 Days Temperature", style = MaterialTheme.typography.titleMedium, color = colorResource(R.color.white), fontWeight = FontWeight.Bold)
+            Text(text = stringResource(R.string.upcoming_5_days_temperature), style = MaterialTheme.typography.titleMedium, color = colorResource(R.color.white), fontWeight = FontWeight.Bold)
             when(daysForecastWeather){
                 is ForecastWeatherResponseState.Loading -> LoadingIndicator()
                 is ForecastWeatherResponseState.Failed -> Text("Failed !")

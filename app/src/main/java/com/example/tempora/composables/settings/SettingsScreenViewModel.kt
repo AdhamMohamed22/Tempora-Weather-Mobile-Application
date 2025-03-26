@@ -1,10 +1,13 @@
 package com.example.tempora.composables.settings
 
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.datastore.preferences.core.Preferences
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.tempora.composables.settings.utils.LocalizationHelper
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -38,6 +41,7 @@ class SettingsScreenViewModel(private val preferencesManager: PreferencesManager
         viewModelScope.launch {
             preferencesManager.getPreference(PreferencesManager.LANGUAGE_KEY, "English").collect {
                 mutableSelectedLanguage.value = it
+                Log.i("TAG", "******: $it")
             }
         }
         viewModelScope.launch {
@@ -48,7 +52,7 @@ class SettingsScreenViewModel(private val preferencesManager: PreferencesManager
         viewModelScope.launch {
             preferencesManager.getPreference(PreferencesManager.TEMPERATURE_UNIT_KEY, "Kelvin °K").collect {
                 mutableSelectedTemperatureUnit.value = it
-                Log.i("TAG", "loadPreferences: $it")
+                Log.i("TAG", "******: $it")
             }
         }
         viewModelScope.launch {
@@ -59,14 +63,24 @@ class SettingsScreenViewModel(private val preferencesManager: PreferencesManager
         }
     }
 
-    fun savePreference(key: Preferences.Key<String>, value: String) {
+    fun savePreference(key: Preferences.Key<String>, value: String, context: Context) {
         viewModelScope.launch {
             preferencesManager.savePreference(key, value)
+
+            if (key == PreferencesManager.LANGUAGE_KEY) {
+                val languageCode = if (value == "Arabic" || value == "العربية") "ar" else "en"
+                LocalizationHelper.setLocale(context, languageCode)
+
+                // Restart the activity to apply language change
+                val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)
+                intent?.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+                context.startActivity(intent)
+            }
 
             //Automatically Synchronise Temperature Unit With Wind Speed Unit & Vice Versa
             when (key) {
                 PreferencesManager.TEMPERATURE_UNIT_KEY -> {
-                    val automaticWindSpeedUnit = if (value == "Celsius °C" || value == "Kelvin °K") {
+                    val automaticWindSpeedUnit = if (value == "Celsius °C" || value == "سيلسيوس °C" || value == "Kelvin °K" || value == "فهرنهايت °F") {
                         "Meters/Sec"
                     } else {
                         "Miles/Hour"
@@ -76,8 +90,8 @@ class SettingsScreenViewModel(private val preferencesManager: PreferencesManager
                 }
 
                 PreferencesManager.WIND_SPEED_UNIT_KEY -> {
-                    val automaticTemperatureUnit = if (value == "Meters/Sec") {
-                        if (mutableSelectedTemperatureUnit.value == "Fahrenheit °F") "Kelvin °K"
+                    val automaticTemperatureUnit = if (value == "Meters/Sec" || value == "متر/ثانية") {
+                        if (mutableSelectedTemperatureUnit.value == "Fahrenheit °F" || mutableSelectedTemperatureUnit.value == "فهرنهايت °F") "Kelvin °K"
                         else mutableSelectedTemperatureUnit.value
                     } else {
                         "Fahrenheit °F"

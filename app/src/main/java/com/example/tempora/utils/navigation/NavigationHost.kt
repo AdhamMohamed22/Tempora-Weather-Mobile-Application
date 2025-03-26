@@ -1,4 +1,4 @@
-package com.example.tempora.utils
+package com.example.tempora.utils.navigation
 
 import android.location.Location
 import android.os.Build
@@ -27,7 +27,7 @@ fun SetupAppNavigation(
 
     val context = LocalContext.current
 
-    NavHost(navController = navController, startDestination = ScreenRoutes.Settings.route)
+    NavHost(navController = navController, startDestination = ScreenRoutes.Home.route)
     {
         composable(ScreenRoutes.Home.route) { HomeScreen(showFAB,location) }
         composable(ScreenRoutes.Favourites.route) { FavouritesScreen(showFAB,snackBarHostState) }
