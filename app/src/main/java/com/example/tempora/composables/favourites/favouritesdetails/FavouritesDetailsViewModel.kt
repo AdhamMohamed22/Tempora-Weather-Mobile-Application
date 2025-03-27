@@ -1,4 +1,4 @@
-package com.example.tempora.composables.home
+package com.example.tempora.composables.favourites.favouritesdetails
 
 import android.content.Context
 import android.os.Build
@@ -12,7 +12,6 @@ import com.example.tempora.data.repository.Repository
 import com.example.tempora.data.response_state.CurrentWeatherResponseState
 import com.example.tempora.data.response_state.ForecastWeatherResponseState
 import com.example.tempora.utils.getTemperatureSymbol
-import com.example.tempora.utils.getTemperatureUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,12 +25,12 @@ import java.time.LocalDate
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 
-class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
+class FavouritesDetailsScreenViewModel(private val repository: Repository) : ViewModel() {
 
-    class HomeScreenViewModelFactory(private val repository: Repository) : ViewModelProvider.Factory
+    class FavouritesDetailsViewModelFactory(private val repository: Repository) : ViewModelProvider.Factory
     {
         override fun <T : ViewModel> create(modelClass: Class<T>): T {
-            return HomeScreenViewModel(repository) as T
+            return FavouritesDetailsScreenViewModel(repository) as T
         }
     }
 

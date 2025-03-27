@@ -11,11 +11,16 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.tempora.composables.alarms.AlarmsScreen
-import com.example.tempora.composables.favourites.FavouritesDetailsScreen
+import com.example.tempora.composables.favourites.favouritesdetails.FavouritesDetailsScreen
 import com.example.tempora.composables.favourites.FavouritesScreen
 import com.example.tempora.composables.favourites.map.MapScreen
 import com.example.tempora.composables.home.HomeScreen
 import com.example.tempora.composables.settings.SettingsScreen
+import com.example.tempora.data.models.FavouriteLocation
+import com.google.gson.Gson
+import java.net.URLDecoder
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
@@ -31,15 +36,29 @@ fun SetupAppNavigation(
     NavHost(navController = navController, startDestination = ScreenRoutes.Home.route)
     {
         composable(ScreenRoutes.Home.route) { HomeScreen(showFAB,location) }
-        composable(ScreenRoutes.Favourites.route) { FavouritesScreen(showFAB, snackBarHostState, navigationAction = { favouriteLocation ->  navController.navigate("FavouritesDetailsScreen/${favouriteLocation.latitude}/${favouriteLocation.longitude}") }) }
+        composable(ScreenRoutes.Favourites.route) {
+            FavouritesScreen(
+                showFAB,
+                snackBarHostState,
+                navigationAction = { favouriteLocation ->
+                    val json = Gson().toJson(favouriteLocation)
+                    val encodedJson = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
+                    navController.navigate("FavouritesDetailsScreen?favouriteLocation=$encodedJson")
+                }
+            )
+        }
 
         composable(ScreenRoutes.Alarms.route) { AlarmsScreen(showFAB) }
         composable(ScreenRoutes.Settings.route) { SettingsScreen(showFAB, navigationAction = { navController.navigate("MapScreen/${false}")}) }
 
-        composable("FavouritesDetailsScreen/{lat}/{lon}") { backStackEntry ->
-            val lat = backStackEntry.arguments?.getString("lat")?.toDoubleOrNull() ?: 0.0
-            val lon = backStackEntry.arguments?.getString("lon")?.toDoubleOrNull() ?: 0.0
-            FavouritesDetailsScreen(showFAB, lat, lon)
+        composable("FavouritesDetailsScreen?favouriteLocation={favouriteLocation}") { backStackEntry ->
+            val json = backStackEntry.arguments?.getString("favouriteLocation")
+            val decodedJson = json?.let { URLDecoder.decode(it, StandardCharsets.UTF_8.toString()) }
+            val favouriteLocation = decodedJson?.let { Gson().fromJson(it, FavouriteLocation::class.java) }
+
+            if (favouriteLocation != null) {
+                FavouritesDetailsScreen(showFAB, favouriteLocation)
+            }
         }
 
         composable("MapScreen/{isFavouritesScreen}") { backStackEntry ->
