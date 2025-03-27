@@ -38,6 +38,7 @@ import com.example.tempora.composables.home.components.Logo
 import com.example.tempora.composables.home.components.TemperatureDegree
 import com.example.tempora.composables.home.components.WeatherDescription
 import com.example.tempora.composables.home.components.WeatherDetails
+import com.example.tempora.composables.settings.utils.SharedPref
 import com.example.tempora.data.local.WeatherDatabase
 import com.example.tempora.data.local.WeatherLocalDataSource
 import com.example.tempora.data.models.CurrentWeather
@@ -73,9 +74,20 @@ fun HomeScreen(showFAB: MutableState<Boolean>, location: Location){
     }
 
     LaunchedEffect(Unit) {
-        viewModel.getCurrentWeather(location.latitude,location.longitude,context)
-        viewModel.getTodayForecastWeather(location.latitude,location.longitude,context)
-        viewModel.get5DaysForecastWeather(location.latitude,location.longitude,context)
+
+        val sharedPref = SharedPref.getInstance(context)
+
+        if(sharedPref.getGpsSelected()){
+            viewModel.getCurrentWeather(location.latitude,location.longitude,context)
+            viewModel.getTodayForecastWeather(location.latitude,location.longitude,context)
+            viewModel.get5DaysForecastWeather(location.latitude,location.longitude,context)
+        }
+        else {
+            viewModel.getCurrentWeather(sharedPref.getLatitude(),sharedPref.getLongitude(),context)
+            viewModel.getTodayForecastWeather(sharedPref.getLatitude(),sharedPref.getLongitude(),context)
+            viewModel.get5DaysForecastWeather(sharedPref.getLatitude(),sharedPref.getLongitude(),context)
+        }
+
     }
 
     when(currentWeatherState){

@@ -32,9 +32,9 @@ fun SetupAppNavigation(
     {
         composable(ScreenRoutes.Home.route) { HomeScreen(showFAB,location) }
         composable(ScreenRoutes.Favourites.route) { FavouritesScreen(showFAB, snackBarHostState, navigationAction = { favouriteLocation ->  navController.navigate("FavouritesDetailsScreen/${favouriteLocation.latitude}/${favouriteLocation.longitude}") }) }
-        composable(ScreenRoutes.Map.route) { MapScreen(showFAB) }
+
         composable(ScreenRoutes.Alarms.route) { AlarmsScreen(showFAB) }
-        composable(ScreenRoutes.Settings.route) { SettingsScreen(showFAB) }
+        composable(ScreenRoutes.Settings.route) { SettingsScreen(showFAB, navigationAction = { navController.navigate("MapScreen/${false}")}) }
 
         composable("FavouritesDetailsScreen/{lat}/{lon}") { backStackEntry ->
             val lat = backStackEntry.arguments?.getString("lat")?.toDoubleOrNull() ?: 0.0
@@ -42,5 +42,9 @@ fun SetupAppNavigation(
             FavouritesDetailsScreen(showFAB, lat, lon)
         }
 
+        composable("MapScreen/{isFavouritesScreen}") { backStackEntry ->
+            val isFavouritesScreen = backStackEntry.arguments?.getString("isFavouritesScreen")?.toBooleanStrictOrNull() ?: false
+            MapScreen(showFAB,isFavouritesScreen)
+        }
     }
 }

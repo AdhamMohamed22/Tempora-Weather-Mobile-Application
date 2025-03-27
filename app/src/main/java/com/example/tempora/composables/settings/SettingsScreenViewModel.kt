@@ -41,24 +41,25 @@ class SettingsScreenViewModel(private val preferencesManager: PreferencesManager
         viewModelScope.launch {
             preferencesManager.getPreference(PreferencesManager.LANGUAGE_KEY, "English").collect {
                 mutableSelectedLanguage.value = it
-                Log.i("TAG", "******: $it")
+                //Log.i("TAG", "******: $it")
             }
         }
         viewModelScope.launch {
             preferencesManager.getPreference(PreferencesManager.LOCATION_KEY, "GPS").collect {
                 mutableSelectedLocation.value = it
+                Log.i("TAG", "xxxx: $it")
             }
         }
         viewModelScope.launch {
             preferencesManager.getPreference(PreferencesManager.TEMPERATURE_UNIT_KEY, "Kelvin °K").collect {
                 mutableSelectedTemperatureUnit.value = it
-                Log.i("TAG", "******: $it")
+                //Log.i("TAG", "******: $it")
             }
         }
         viewModelScope.launch {
             preferencesManager.getPreference(PreferencesManager.WIND_SPEED_UNIT_KEY, "Meter/Sec").collect {
                 mutableSelectedWindSpeedUnit.value = it
-                Log.i("TAG", "loadPreferences: $it")
+                //Log.i("TAG", "loadPreferences: $it")
             }
         }
     }
@@ -99,6 +100,10 @@ class SettingsScreenViewModel(private val preferencesManager: PreferencesManager
                     preferencesManager.savePreference(PreferencesManager.TEMPERATURE_UNIT_KEY, automaticTemperatureUnit)
                     mutableSelectedTemperatureUnit.value = automaticTemperatureUnit
                 }
+            }
+
+            if (key == PreferencesManager.LOCATION_KEY) {
+                mutableSelectedLocation.value = if (value == "Map" || value == "الخريطة") "Map" else "GPS"
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.example.tempora.composables.settings
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tempora.R
+import com.example.tempora.composables.settings.utils.SharedPref
 import com.example.tempora.composables.settings.utils.getLanguage
 import com.example.tempora.composables.settings.utils.getLanguageValue
 import com.example.tempora.composables.settings.utils.getLocation
@@ -47,9 +49,11 @@ import com.example.tempora.composables.settings.utils.getTemperatureUnit
 import com.example.tempora.composables.settings.utils.getTemperatureValue
 import com.example.tempora.composables.settings.utils.getWindSpeedUnit
 import com.example.tempora.composables.settings.utils.getWindSpeedValue
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 @Composable
-fun SettingsScreen(showFAB: MutableState<Boolean>) {
+fun SettingsScreen(showFAB: MutableState<Boolean>, navigationAction: () -> Unit) {
     showFAB.value = false
 
     val context = LocalContext.current
@@ -109,6 +113,12 @@ fun SettingsScreen(showFAB: MutableState<Boolean>) {
                 selectedOption = getLocation(selectedLocationState),
                 onOptionSelected = {
                     viewModel.savePreference(PreferencesManager.LOCATION_KEY, getLocationValue(it),context)
+                    if(it == "Map" || it == "الخريطة"){
+                        navigationAction()
+                    } else {
+                        val sharedPref = SharedPref.getInstance(context)
+                        sharedPref.setGpsSelected(true)
+                    }
                 }
             )
 

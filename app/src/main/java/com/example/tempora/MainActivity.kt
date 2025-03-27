@@ -191,7 +191,7 @@ fun MainScreen(location: Location, showFAB: MutableState<Boolean>) {
                 FloatingActionButton(
                     onClick = {
                         /* Handle FAB click */
-                        navController.navigate(ScreenRoutes.Map.route)
+                        navController.navigate("MapScreen/${true}")
                     },
                     containerColor = colorResource(R.color.primaryColor),
                     modifier = Modifier.offset(x = 5.dp, y = 10.dp)
