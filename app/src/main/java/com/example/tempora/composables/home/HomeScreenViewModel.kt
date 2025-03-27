@@ -11,6 +11,8 @@ import com.example.tempora.composables.settings.PreferencesManager
 import com.example.tempora.data.repository.Repository
 import com.example.tempora.data.response_state.CurrentWeatherResponseState
 import com.example.tempora.data.response_state.ForecastWeatherResponseState
+import com.example.tempora.utils.getTemperatureSymbol
+import com.example.tempora.utils.getTemperatureUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -139,21 +141,5 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
                 Log.i("TAG", "getForecastWeather: ${ex.message}")
             }
         }
-    }
-}
-
-fun getTemperatureUnit(selectedUnit: String): String? {
-    return when (selectedUnit) {
-        "Celsius °C" -> "metric"
-        "Fahrenheit °F" -> "imperial"
-        else -> null
-    }
-}
-
-fun getTemperatureSymbol(selectedUnit: String): String {
-    return when (selectedUnit) {
-        "Celsius °C" -> "°C"
-        "Fahrenheit °F" -> "°F"
-        else -> "°K"
     }
 }
