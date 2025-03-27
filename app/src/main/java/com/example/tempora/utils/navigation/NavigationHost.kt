@@ -1,4 +1,4 @@
-package com.example.tempora.utils
+package com.example.tempora.utils.navigation
 
 import android.location.Location
 import android.os.Build
@@ -11,6 +11,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.example.tempora.composables.alarms.AlarmsScreen
+import com.example.tempora.composables.favourites.FavouritesDetailsScreen
 import com.example.tempora.composables.favourites.FavouritesScreen
 import com.example.tempora.composables.favourites.map.MapScreen
 import com.example.tempora.composables.home.HomeScreen
@@ -30,9 +31,20 @@ fun SetupAppNavigation(
     NavHost(navController = navController, startDestination = ScreenRoutes.Home.route)
     {
         composable(ScreenRoutes.Home.route) { HomeScreen(showFAB,location) }
-        composable(ScreenRoutes.Favourites.route) { FavouritesScreen(showFAB,snackBarHostState) }
-        composable(ScreenRoutes.Map.route) { MapScreen(showFAB) }
+        composable(ScreenRoutes.Favourites.route) { FavouritesScreen(showFAB, snackBarHostState, navigationAction = { favouriteLocation ->  navController.navigate("FavouritesDetailsScreen/${favouriteLocation.latitude}/${favouriteLocation.longitude}") }) }
+
         composable(ScreenRoutes.Alarms.route) { AlarmsScreen(showFAB) }
-        composable(ScreenRoutes.Settings.route) { SettingsScreen(showFAB) }
+        composable(ScreenRoutes.Settings.route) { SettingsScreen(showFAB, navigationAction = { navController.navigate("MapScreen/${false}")}) }
+
+        composable("FavouritesDetailsScreen/{lat}/{lon}") { backStackEntry ->
+            val lat = backStackEntry.arguments?.getString("lat")?.toDoubleOrNull() ?: 0.0
+            val lon = backStackEntry.arguments?.getString("lon")?.toDoubleOrNull() ?: 0.0
+            FavouritesDetailsScreen(showFAB, lat, lon)
+        }
+
+        composable("MapScreen/{isFavouritesScreen}") { backStackEntry ->
+            val isFavouritesScreen = backStackEntry.arguments?.getString("isFavouritesScreen")?.toBooleanStrictOrNull() ?: false
+            MapScreen(showFAB,isFavouritesScreen)
+        }
     }
 }

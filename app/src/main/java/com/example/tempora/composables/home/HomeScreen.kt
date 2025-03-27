@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +24,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -39,6 +38,7 @@ import com.example.tempora.composables.home.components.Logo
 import com.example.tempora.composables.home.components.TemperatureDegree
 import com.example.tempora.composables.home.components.WeatherDescription
 import com.example.tempora.composables.home.components.WeatherDetails
+import com.example.tempora.composables.settings.utils.SharedPref
 import com.example.tempora.data.local.WeatherDatabase
 import com.example.tempora.data.local.WeatherLocalDataSource
 import com.example.tempora.data.models.CurrentWeather
@@ -74,9 +74,20 @@ fun HomeScreen(showFAB: MutableState<Boolean>, location: Location){
     }
 
     LaunchedEffect(Unit) {
-        viewModel.getCurrentWeather(location.latitude,location.longitude)
-        viewModel.getTodayForecastWeather(location.latitude,location.longitude)
-        viewModel.get5DaysForecastWeather(location.latitude,location.longitude)
+
+        val sharedPref = SharedPref.getInstance(context)
+
+        if(sharedPref.getGpsSelected()){
+            viewModel.getCurrentWeather(location.latitude,location.longitude,context)
+            viewModel.getTodayForecastWeather(location.latitude,location.longitude,context)
+            viewModel.get5DaysForecastWeather(location.latitude,location.longitude,context)
+        }
+        else {
+            viewModel.getCurrentWeather(sharedPref.getLatitude(),sharedPref.getLongitude(),context)
+            viewModel.getTodayForecastWeather(sharedPref.getLatitude(),sharedPref.getLongitude(),context)
+            viewModel.get5DaysForecastWeather(sharedPref.getLatitude(),sharedPref.getLongitude(),context)
+        }
+
     }
 
     when(currentWeatherState){
@@ -95,6 +106,8 @@ fun DisplayHomeScreen(currentWeather: CurrentWeather,viewModel: HomeScreenViewMo
     val todayForecastWeatherState by viewModel.todayForecastWeather.collectAsStateWithLifecycle()
     val daysForecastWeather by viewModel.daysForecastWeather.collectAsStateWithLifecycle()
 
+    val selectedUnit by viewModel.selectedUnit.collectAsStateWithLifecycle()
+
     Box(modifier = Modifier.fillMaxSize())
     {
         // Background Image
@@ -102,7 +115,9 @@ fun DisplayHomeScreen(currentWeather: CurrentWeather,viewModel: HomeScreenViewMo
             painter = painterResource(id = R.drawable.background),
             contentDescription = "HomeScreen Background",
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxSize().graphicsLayer(alpha = 0.8f)
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer(alpha = 0.8f)
         )
         // Foreground UI elements
         Column(
@@ -111,8 +126,8 @@ fun DisplayHomeScreen(currentWeather: CurrentWeather,viewModel: HomeScreenViewMo
         ) {
             Spacer(modifier = Modifier.height(24.dp))
             Logo()
-            WeatherStatusIcon(currentWeather.weather[0].description)
-            TemperatureDegree(currentWeather.main.temp.toString())
+            WeatherStatusIcon(currentWeather.weather[0].icon)
+            TemperatureDegree(currentWeather.main.temp.toString(),selectedUnit)
             WeatherDescription(currentWeather.weather[0].description)
             Spacer(modifier = Modifier.height(8.dp))
             City(currentWeather.name,currentWeather.sys.country)
@@ -120,19 +135,19 @@ fun DisplayHomeScreen(currentWeather: CurrentWeather,viewModel: HomeScreenViewMo
             WeatherDetails(currentWeather.clouds.all, currentWeather.main.humidity, currentWeather.wind.speed.toString(), currentWeather.main.pressure.toString(), currentWeather.dt.toLong())
 
             Spacer(modifier = Modifier.height(8.dp))
-            Text(text = "Today's Hourly Temperature", style = MaterialTheme.typography.titleMedium, color = colorResource(R.color.white), fontWeight = FontWeight.Bold)
+            Text(text = stringResource(R.string.today_s_hourly_temperature), style = MaterialTheme.typography.titleMedium, color = colorResource(R.color.white), fontWeight = FontWeight.Bold)
             when(todayForecastWeatherState){
                 is ForecastWeatherResponseState.Loading -> LoadingIndicator()
                 is ForecastWeatherResponseState.Failed -> Text("Failed !")
-                is ForecastWeatherResponseState.Success -> ListOfHourCards(todayForecast = (todayForecastWeatherState as ForecastWeatherResponseState.Success).forecastWeather)
+                is ForecastWeatherResponseState.Success -> ListOfHourCards(todayForecast = (todayForecastWeatherState as ForecastWeatherResponseState.Success).forecastWeather,selectedUnit)
             }
 
 
-            Text(text = "Upcoming 5 Days Temperature", style = MaterialTheme.typography.titleMedium, color = colorResource(R.color.white), fontWeight = FontWeight.Bold)
+            Text(text = stringResource(R.string.upcoming_5_days_temperature), style = MaterialTheme.typography.titleMedium, color = colorResource(R.color.white), fontWeight = FontWeight.Bold)
             when(daysForecastWeather){
                 is ForecastWeatherResponseState.Loading -> LoadingIndicator()
                 is ForecastWeatherResponseState.Failed -> Text("Failed !")
-                is ForecastWeatherResponseState.Success -> ListOf5WeekDaysCards(fiveDaysList = (daysForecastWeather as ForecastWeatherResponseState.Success).forecastWeather)
+                is ForecastWeatherResponseState.Success -> ListOf5WeekDaysCards(fiveDaysList = (daysForecastWeather as ForecastWeatherResponseState.Success).forecastWeather,selectedUnit)
             }
 
         }

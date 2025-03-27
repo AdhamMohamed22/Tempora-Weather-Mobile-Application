@@ -14,19 +14,18 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.tempora.R
-import com.example.tempora.data.models.CurrentWeather
-import com.example.tempora.data.models.ForecastWeather
 import com.example.tempora.data.models.Item0
+import com.example.tempora.composables.settings.utils.formatNumberBasedOnLanguage
+import com.example.tempora.composables.settings.utils.formatTemperatureUnitBasedOnLanguage
 
 @OptIn(ExperimentalGlideComposeApi::class)
 @Composable
-fun HourCard(todayForecast: Item0) {
+fun HourCard(todayForecast: Item0, selectedUnit: String) {
     Card(
         modifier = Modifier
             .wrapContentSize(Alignment.Center)
@@ -42,28 +41,28 @@ fun HourCard(todayForecast: Item0) {
                 .wrapContentSize(Alignment.Center),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(text = todayForecast.dt_txt.substringAfter(" "), fontWeight = FontWeight.Medium, fontSize = 16.sp)
+            Text(text = formatNumberBasedOnLanguage(todayForecast.dt_txt.substringAfter(" ")), fontWeight = FontWeight.Medium, fontSize = 16.sp)
 
             GlideImage(
                 model = "https://openweathermap.org/img/wn/${todayForecast.weather[0].icon}@2x.png", contentDescription = "",
                 modifier = Modifier.size(75.dp)
             )
 
-            Text(text = todayForecast.main.temp.toString(), fontWeight = FontWeight.Medium, fontSize = 16.sp)
+            Text(text = formatNumberBasedOnLanguage("${todayForecast.main.temp} ${formatTemperatureUnitBasedOnLanguage(selectedUnit)}"), fontWeight = FontWeight.Medium, fontSize = 16.sp)
         }
     }
 }
 
 
 @Composable
-fun ListOfHourCards(todayForecast: List<Item0>) {
+fun ListOfHourCards(todayForecast: List<Item0>, selectedUnit: String) {
     LazyRow(
         modifier = Modifier.wrapContentSize(Alignment.Center),
     )
     {
         items(todayForecast.size)
         {
-            HourCard(todayForecast[it])
+            HourCard(todayForecast[it], selectedUnit)
         }
     }
 }

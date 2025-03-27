@@ -1,10 +1,13 @@
 package com.example.tempora.composables.favourites.map
 
+import android.content.Context
 import android.location.Location
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.tempora.composables.settings.PreferencesManager
+import com.example.tempora.composables.settings.utils.SharedPref
 import com.example.tempora.data.models.FavouriteLocation
 import com.example.tempora.data.repository.Repository
 import com.google.android.gms.maps.model.LatLng
@@ -118,4 +121,10 @@ class MapScreenViewModel(private val placesClient: PlacesClient,private val repo
         }
     }
 
+    fun selectFavouriteLocation(lat: Double, lon: Double,context: Context) {
+        val sharedPref = SharedPref.getInstance(context)
+        sharedPref.setLatitude(lat)
+        sharedPref.setLongitude(lon)
+        sharedPref.setGpsSelected(false)
+    }
 }

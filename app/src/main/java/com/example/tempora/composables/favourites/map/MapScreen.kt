@@ -50,13 +50,13 @@ import com.google.maps.android.compose.rememberCameraPositionState
 import com.google.maps.android.compose.rememberMarkerState
 
 @Composable
-fun MapScreen(showFAB: MutableState<Boolean>) {
+fun MapScreen(showFAB: MutableState<Boolean>, isFavouritesScreen: Boolean) {
 
     showFAB.value = false
     val context = LocalContext.current
 
     // Initialize Places API (outside ViewModel)
-    Places.initializeWithNewPlacesApiEnabled(context, "AIzaSyBvhSpyZXwUDq2gXWWLxKrdW8w9TOudDoU")
+    Places.initializeWithNewPlacesApiEnabled(context, "AIzaSyCaj10hgcwGaosoYRyv79ppLviFJ9eMNmM")
     val placesClient: PlacesClient = Places.createClient(context)
 
     // Create ViewModel with custom factory
@@ -161,13 +161,15 @@ fun MapScreen(showFAB: MutableState<Boolean>) {
                     Spacer(modifier = Modifier.height(12.dp))
 
                     Button(
-                        onClick = { viewModel.insertFavouriteLocation(selectedLocation!!.latitude, selectedLocation!!.longitude, address) },
+                        onClick = {
+                            if(isFavouritesScreen) viewModel.insertFavouriteLocation(selectedLocation!!.latitude, selectedLocation!!.longitude, address)
+                            else { viewModel.selectFavouriteLocation(favouriteLocation.latitude,favouriteLocation.longitude,context)} },
                         colors = ButtonDefaults.buttonColors(colorResource(R.color.primaryColor)),
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.fillMaxWidth()
                     ) {
                         Text(
-                            text = "Add to Favourites",
+                            text = if(isFavouritesScreen) "Add to Favourites" else "Select",
                             style = MaterialTheme.typography.titleMedium,
                             color = colorResource(R.color.white),
                             fontWeight = FontWeight.Bold

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings">الإعدادات</string>
+    <string name="language">اللغة</string>
+    <string name="location">الموقع</string>
+    <string name="temperature_unit">وحدة درجة الحرارة</string>
+    <string name="wind_speed_unit">وحدة سرعة الرياح</string>
+    <string name="english">الإنجليزية</string>
+    <string name="arabic">العربية</string>
+    <string name="gps">نظام تحديد المواقع (GPS)</string>
+    <string name="map">الخريطة</string>
+    <string name="kelvin_k">كلفن °K</string>
+    <string name="celsius_c">سيلسيوس °C</string>
+    <string name="fahrenheit_f">فهرنهايت °F</string>
+    <string name="meter_sec">متر/ثانية</string>
+    <string name="mile_hour">ميل/ساعة</string>
+    <string name="cloud">الغيوم</string>
+    <string name="humidity">الرطوبة</string>
+    <string name="wind">الرياح</string>
+    <string name="pressure">الضغط</string>
+    <string name="today_s_hourly_temperature">درجات حرارة اليوم</string>
+    <string name="upcoming_5_days_temperature">درجات حرارة الخمسة أيام القادمة</string>
+    <string name="min">الصغرى: %1$s %2$s  |</string>
+    <string name="max">الكبرى: %1$s %2$s</string>
+    <string name="temp">الحرارة: %1$s %2$s</string>
+    <string name="undo">تراجع</string>
+    <string name="nothing_has_been_added_to_favourites_yet">لم يتم اضافة شى في المفضلة</string>
+    <string name="latitude">دوائر العرض: %1$s</string>
+    <string name="longitude">خطوط الطول: %1$s</string>
+    <string name="delete">مسح</string>
+</resources>
