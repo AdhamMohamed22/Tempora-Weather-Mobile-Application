@@ -139,8 +139,8 @@ fun MapScreen(showFAB: MutableState<Boolean>, isFavouritesScreen: Boolean) {
 
 
         selectedLocation?.let { location ->
-            val favouriteLocation = FavouriteLocation(location.latitude,location.longitude,null)
-            val address = getAddressFromLocation(favouriteLocation)
+            //val favouriteLocation = FavouriteLocation(location.latitude,location.longitude,null,null,null)
+            val address = getAddressFromLocation(location.latitude,location.longitude)
             Card(
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
@@ -162,8 +162,8 @@ fun MapScreen(showFAB: MutableState<Boolean>, isFavouritesScreen: Boolean) {
 
                     Button(
                         onClick = {
-                            if(isFavouritesScreen) viewModel.insertFavouriteLocation(selectedLocation!!.latitude, selectedLocation!!.longitude, address)
-                            else { viewModel.selectFavouriteLocation(favouriteLocation.latitude,favouriteLocation.longitude,context)} },
+                            if(isFavouritesScreen) viewModel.insertFavouriteLocation(location.latitude, location.longitude, address, context)
+                            else { viewModel.selectFavouriteLocation(location.latitude,location.longitude,context)} },
                         colors = ButtonDefaults.buttonColors(colorResource(R.color.primaryColor)),
                         shape = RoundedCornerShape(8.dp),
                         modifier = Modifier.fillMaxWidth()

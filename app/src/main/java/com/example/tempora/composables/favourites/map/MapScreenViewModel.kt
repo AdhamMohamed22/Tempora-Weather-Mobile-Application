@@ -8,6 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.tempora.composables.settings.PreferencesManager
 import com.example.tempora.composables.settings.utils.SharedPref
+import com.example.tempora.composables.settings.utils.getTemperatureUnit
 import com.example.tempora.data.models.FavouriteLocation
 import com.example.tempora.data.repository.Repository
 import com.google.android.gms.maps.model.LatLng
@@ -23,6 +24,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 class MapScreenViewModel(private val placesClient: PlacesClient,private val repository: Repository): ViewModel() {
@@ -109,10 +112,18 @@ class MapScreenViewModel(private val placesClient: PlacesClient,private val repo
         }
     }
 
-    fun insertFavouriteLocation(lat: Double, lon: Double, address: String) {
+    fun insertFavouriteLocation(lat: Double, lon: Double, address: String, context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
+            val selectedUnit = PreferencesManager.getInstance(context).getPreference(PreferencesManager.TEMPERATURE_UNIT_KEY,"Kelvin °K").first()
+            val units = getTemperatureUnit(selectedUnit)
+
+            val selectedLanguage = PreferencesManager.getInstance(context).getPreference(PreferencesManager.LANGUAGE_KEY, "English").first()
+            var language = if(selectedLanguage == "Arabic") "ar" else "en"
+
             try {
-                val favouriteLocation = FavouriteLocation(latitude = lat, longitude = lon, country = address)
+                val currentWeather = repository.getCurrentWeather(lat,lon,"52eeded717ded0ae2029412d4f1ae35f",units,language).first()
+                val forecastWeather = repository.getForecastWeather(lat,lon,"52eeded717ded0ae2029412d4f1ae35f",units,language).first()
+                val favouriteLocation = FavouriteLocation(latitude = lat, longitude = lon, country = address, currentWeather = currentWeather, forecastWeather = forecastWeather)
                 repository.insertFavouriteLocation(favouriteLocation)
                 mutableMessage.emit("Location Added Successfully!")
             } catch (ex: Exception){
@@ -128,3 +139,4 @@ class MapScreenViewModel(private val placesClient: PlacesClient,private val repo
         sharedPref.setGpsSelected(false)
     }
 }
+

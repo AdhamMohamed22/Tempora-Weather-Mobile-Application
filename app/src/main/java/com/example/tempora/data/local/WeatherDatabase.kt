@@ -4,9 +4,12 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 import com.example.tempora.data.models.FavouriteLocation
+import com.example.tempora.utils.converter.Converters
 
-@Database(entities = [FavouriteLocation::class], version = 3)
+@TypeConverters(Converters::class)
+@Database(entities = [FavouriteLocation::class], version = 4)
 abstract class WeatherDatabase : RoomDatabase(){
 
     abstract fun getWeatherDao(): WeatherDao
