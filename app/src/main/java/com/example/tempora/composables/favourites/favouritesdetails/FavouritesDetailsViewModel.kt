@@ -96,7 +96,7 @@ class FavouritesDetailsScreenViewModel(private val repository: Repository) : Vie
             var language = if(selectedLanguage == "Arabic") "ar" else "en"
 
             try {
-                val result = repository.getForecastWeather(lat,lon,appid = "52eeded717ded0ae2029412d4f1ae35f",units,language)
+                val result = repository.getForecastWeather(lat,lon,BuildConfig.appidSafe,units,language)
                 result
                     .catch {
                             ex -> mutableTodayForecastWeather.value = ForecastWeatherResponseState.Failed(ex)
@@ -130,7 +130,7 @@ class FavouritesDetailsScreenViewModel(private val repository: Repository) : Vie
             val language = if(selectedLanguage == "Arabic") "ar" else "en"
 
             try {
-                val result = repository.getForecastWeather(lat,lon,appid = "52eeded717ded0ae2029412d4f1ae35f",units,language)
+                val result = repository.getForecastWeather(lat,lon,BuildConfig.appidSafe,units,language)
                 result
                     .catch {
                             ex -> mutable5DaysForecastWeather.value = ForecastWeatherResponseState.Failed(ex)
