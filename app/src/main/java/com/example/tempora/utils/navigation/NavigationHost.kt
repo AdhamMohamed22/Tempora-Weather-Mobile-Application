@@ -28,7 +28,9 @@ fun SetupAppNavigation(
     navController: NavHostController,
     location: Location,
     showFAB: MutableState<Boolean>,
-    snackBarHostState: SnackbarHostState
+    snackBarHostState: SnackbarHostState,
+    favouritesFAB: MutableState<Boolean>,
+    showAlarmsBottomSheet: MutableState<Boolean>,
 ) {
 
     val context = LocalContext.current
@@ -44,11 +46,12 @@ fun SetupAppNavigation(
                     val json = Gson().toJson(favouriteLocation)
                     val encodedJson = URLEncoder.encode(json, StandardCharsets.UTF_8.toString())
                     navController.navigate("FavouritesDetailsScreen?favouriteLocation=$encodedJson")
-                }
+                },
+                favouritesFAB
             )
         }
 
-        composable(ScreenRoutes.Alarms.route) { AlarmsScreen(showFAB) }
+        composable(ScreenRoutes.Alarms.route) { AlarmsScreen(showFAB,favouritesFAB,showAlarmsBottomSheet,context) }
         composable(ScreenRoutes.Settings.route) { SettingsScreen(showFAB, navigationAction = { navController.navigate("MapScreen/${false}")}) }
 
         composable("FavouritesDetailsScreen?favouriteLocation={favouriteLocation}") { backStackEntry ->
