@@ -120,15 +120,6 @@ fun HomeScreen(showFAB: MutableState<Boolean>, location: Location){
                     )
                 }
 
-                if (!isFailed) {
-                    Text(
-                        text = stringResource(R.string.upcoming_5_days_temperature),
-                        style = MaterialTheme.typography.titleMedium,
-                        color = colorResource(R.color.white),
-                        fontWeight = FontWeight.Bold
-                    )
-                }
-
                 when (daysForecastWeather) {
                     is ForecastWeatherResponseState.Loading -> LoadingIndicator()
                     is ForecastWeatherResponseState.Failed -> Text("")

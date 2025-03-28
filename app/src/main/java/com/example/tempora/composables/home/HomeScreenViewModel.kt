@@ -7,6 +7,7 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.tempora.BuildConfig
 import com.example.tempora.composables.settings.PreferencesManager
 import com.example.tempora.data.repository.Repository
 import com.example.tempora.data.response_state.CurrentWeatherResponseState
@@ -59,17 +60,17 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
         viewModelScope.launch(Dispatchers.IO){
             val selectedUnit = PreferencesManager.getInstance(context).getPreference(
                 PreferencesManager.TEMPERATURE_UNIT_KEY,"Kelvin °K").first()
-            val units = com.example.tempora.utils.getTemperatureUnit(selectedUnit)
+            val units = getTemperatureUnit(selectedUnit)
 
             val selectedLanguage = PreferencesManager.getInstance(context).getPreference(
                 PreferencesManager.LANGUAGE_KEY, "English").first()
-            var language = if(selectedLanguage == "Arabic") "ar" else "en"
+            val language = if(selectedLanguage == "Arabic") "ar" else "en"
 
             // Store the selected unit symbol
             mutableSelectedUnit.value = getTemperatureSymbol(selectedUnit)
 
             try {
-                val result = repository.getCurrentWeather(lat,lon,appid = "52eeded717ded0ae2029412d4f1ae35f",units,language)
+                val result = repository.getCurrentWeather(lat,lon,BuildConfig.appidSafe,units,language)
                 result
                     .catch {
                             ex -> mutableCurrentWeather.value = CurrentWeatherResponseState.Failed(ex)

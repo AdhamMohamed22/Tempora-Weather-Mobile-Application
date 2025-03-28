@@ -111,7 +111,6 @@ fun FavouritesDetailsScreen(showFAB: MutableState<Boolean>, favouriteLocation: F
                     ListOfHourCards(todayForecast,selectedUnit) }
             }
 
-            Text(text = stringResource(R.string.upcoming_5_days_temperature), style = MaterialTheme.typography.titleMedium, color = colorResource(R.color.white), fontWeight = FontWeight.Bold)
             when(daysForecastWeather){
                 is ForecastWeatherResponseState.Loading -> LoadingIndicator()
                 is ForecastWeatherResponseState.Failed -> { Display5DaysForecastOffline(favouriteLocation.forecastWeather.list,selectedUnit) }

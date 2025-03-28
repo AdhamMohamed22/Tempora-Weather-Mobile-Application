@@ -27,6 +27,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tempora.BuildConfig
 import com.example.tempora.R
 import com.example.tempora.data.local.WeatherDatabase
 import com.example.tempora.data.local.WeatherLocalDataSource
@@ -56,7 +57,7 @@ fun MapScreen(showFAB: MutableState<Boolean>, isFavouritesScreen: Boolean) {
     val context = LocalContext.current
 
     // Initialize Places API (outside ViewModel)
-    Places.initializeWithNewPlacesApiEnabled(context, "AIzaSyCaj10hgcwGaosoYRyv79ppLviFJ9eMNmM")
+    Places.initializeWithNewPlacesApiEnabled(context, BuildConfig.appKeySafe)
     val placesClient: PlacesClient = Places.createClient(context)
 
     // Create ViewModel with custom factory
