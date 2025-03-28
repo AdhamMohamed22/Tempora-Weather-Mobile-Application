@@ -71,8 +71,6 @@ class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationState: MutableState<Location>
 
-    private lateinit var showFAB: MutableState<Boolean>
-
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,16 +84,13 @@ class MainActivity : ComponentActivity() {
         LocalizationHelper.setLocale(this, languageCode)
 
         setContent {
-
-            showFAB = remember { mutableStateOf(false) }
-
             locationState = remember { mutableStateOf(Location(LocationManager.GPS_PROVIDER)) }
 
             var displaySplashScreen by remember { mutableStateOf(true) }
             if (displaySplashScreen){
                 SplashScreen(onComplete = {displaySplashScreen = false})
             } else {
-                MainScreen(locationState.value,showFAB)
+                MainScreen(locationState.value)
             }
         }
     }
@@ -174,12 +169,17 @@ class MainActivity : ComponentActivity() {
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun MainScreen(location: Location, showFAB: MutableState<Boolean>) {
+fun MainScreen(location: Location) {
 
     val navController = rememberNavController()
     val navigationBarItems = remember { NavigationBarItems.values() }
     var selectedIndex by remember { mutableStateOf(0) }
+
     val snackBarHostState = remember { SnackbarHostState() }
+
+    val showFAB = remember { mutableStateOf(false) }
+    val favouritesFAB = remember { mutableStateOf(true) }
+    val showAlarmsBottomSheet = remember { mutableStateOf(false) }
 
     Scaffold(
         modifier = Modifier.padding(all = 0.dp),
@@ -191,12 +191,17 @@ fun MainScreen(location: Location, showFAB: MutableState<Boolean>) {
                 FloatingActionButton(
                     onClick = {
                         /* Handle FAB click */
-                        navController.navigate("MapScreen/${true}")
+                        if(favouritesFAB.value){
+                            navController.navigate("MapScreen/${true}")
+                        } else {
+                            showAlarmsBottomSheet.value = true
+                        }
                     },
                     containerColor = colorResource(R.color.primaryColor),
                     modifier = Modifier.offset(x = 5.dp, y = 10.dp)
                 ) {
-                    Icon(Icons.Default.Favorite, contentDescription = "Add To Favourites", tint = colorResource(R.color.white))
+                    if(favouritesFAB.value) { Icon(Icons.Default.Favorite, contentDescription = "Add To Favourites", tint = colorResource(R.color.white)) }
+                    else { Icon(Icons.Default.Notifications, contentDescription = "Add To Alarms", tint = colorResource(R.color.white)) }
                 }
             }
         },
@@ -236,7 +241,7 @@ fun MainScreen(location: Location, showFAB: MutableState<Boolean>) {
         }
     ) { paddingValues ->
         Box(modifier = Modifier.padding(paddingValues)) {
-            SetupAppNavigation(navController,location,showFAB,snackBarHostState)
+            SetupAppNavigation(navController,location,showFAB,snackBarHostState,favouritesFAB,showAlarmsBottomSheet)
         }
     }
 }

@@ -8,4 +8,21 @@
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
+    <style name="CustomDatePickerDialog" parent="Theme.Material3.Light.Dialog">
+        <!-- Customize your DatePickerDialog here -->
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorAccent">@color/primaryColor</item>
+        <item name="android:textColorPrimary">@color/black</item>
+    </style>
+
+
+    <style name="CustomTimePickerDialog" parent="Theme.Material3.Light.Dialog">
+        <!-- Customize your TimePickerDialog here -->
+        <item name="colorPrimary">@color/primaryColor</item>
+        <item name="colorAccent">@color/primaryColor</item>
+        <item name="android:textColorPrimary">@color/black</item>
+    </style>
+
+
+
 </resources>

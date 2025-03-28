@@ -54,9 +54,15 @@ import com.example.tempora.composables.settings.utils.formatNumberBasedOnLanguag
 
 
 @Composable
-fun FavouritesScreen(showFAB: MutableState<Boolean>, snackBarHostState: SnackbarHostState, navigationAction: (FavouriteLocation) -> Unit) {
+fun FavouritesScreen(
+    showFAB: MutableState<Boolean>,
+    snackBarHostState: SnackbarHostState,
+    navigationAction: (FavouriteLocation) -> Unit,
+    favouritesFAB: MutableState<Boolean>
+) {
 
     showFAB.value = true
+    favouritesFAB.value = true
     val context = LocalContext.current
 
     val favouritesScreenViewModelFactory =

@@ -24,8 +24,18 @@
     <string name="max">الكبرى: %1$s %2$s</string>
     <string name="temp">الحرارة: %1$s %2$s</string>
     <string name="undo">تراجع</string>
-    <string name="nothing_has_been_added_to_favourites_yet">لم يتم اضافة شى في المفضلة</string>
+    <string name="nothing_has_been_added_to_favourites_yet">لم يتم اضافة شى في المفضلة!</string>
     <string name="latitude">دوائر العرض: %1$s</string>
     <string name="longitude">خطوط الطول: %1$s</string>
     <string name="delete">مسح</string>
+    <string name="please_select_a_valid_future_time">برجاء تحديد وقت صالح في المستقبل!</string>
+    <string name="no_alarms_has_been_added_yet">لم يتم اضافة شى في التنبيهات!</string>
+    <string name="date">التاريخ</string>
+    <string name="start_duration">وقت البداية</string>
+    <string name="end_duration">وقت النهاية</string>
+    <string name="notify_me_by">أعلمني بواسطة:</string>
+    <string name="alarm">منبه</string>
+    <string name="notification">إشعار</string>
+    <string name="cancel">إلغاء</string>
+    <string name="save">حفظ</string>
 </resources>

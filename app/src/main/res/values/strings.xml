@@ -28,4 +28,14 @@
     <string name="latitude">Latitude: %1$s</string>
     <string name="longitude">Longitude: %1$s</string>
     <string name="delete">Delete</string>
+    <string name="please_select_a_valid_future_time">Please Select A Valid Future Time!</string>
+    <string name="no_alarms_has_been_added_yet">No Alarms Has Been Added Yet!</string>
+    <string name="date">Date</string>
+    <string name="start_duration">Start Duration</string>
+    <string name="end_duration">End Duration</string>
+    <string name="notify_me_by">Notify me by:</string>
+    <string name="alarm">Alarm</string>
+    <string name="notification">Notification</string>
+    <string name="cancel">Cancel</string>
+    <string name="save">Save</string>
 </resources>
