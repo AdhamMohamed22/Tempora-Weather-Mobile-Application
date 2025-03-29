@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -17,6 +17,14 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TEMPORA"
         tools:targetApi="31">
+<!--        <service-->
+<!--            android:name=".composables.alarms.service.NotificationService"-->
+<!--            android:enabled="true"-->
+<!--            android:exported="true"></service>-->
+
+        <!-- Register the BroadcastReceiver -->
+        <receiver android:name=".composables.alarms.notification.broadcastreciever.NotificationReceiver"
+            android:exported="false" />
 
         <activity
             android:name=".MainActivity"
@@ -30,10 +38,10 @@
             </intent-filter>
         </activity>
 
+        <!-- Register the Api-Key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCaj10hgcwGaosoYRyv79ppLviFJ9eMNmM" />
-
+            android:value="AIzaSyCrz8arZ9O88eZgIHCNnHv-fBTv93nlggg" />
     </application>
 
 </manifest>

@@ -19,4 +19,5 @@ interface WeatherDao {
 
     @Delete
     suspend fun deleteFavouriteLocation(favouriteLocation: FavouriteLocation)
+
 }

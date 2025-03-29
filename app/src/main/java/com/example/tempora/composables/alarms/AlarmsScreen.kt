@@ -25,7 +25,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -48,10 +47,8 @@ import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
+import com.example.tempora.composables.alarms.notification.workmanager.scheduleNotification
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Locale
@@ -69,15 +66,11 @@ fun AlarmsScreen(
 
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var selectedNotifyMe by remember { mutableStateOf("Alarm") }
-
-    var selectedDate by remember { mutableStateOf("Select Date") }
-    var startTime by remember { mutableStateOf("Select Start Duration") }
-    var endTime by remember { mutableStateOf("Select End Duration") }
+    var selectedDate by remember { mutableStateOf(Calendar.getInstance()) }
+    var selectedTime by remember { mutableStateOf(Calendar.getInstance()) }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(colorResource(R.color.white)),
+        modifier = Modifier.fillMaxSize().background(colorResource(R.color.white)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -101,9 +94,7 @@ fun AlarmsScreen(
                 containerColor = colorResource(R.color.secondaryColor)
             ) {
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(12.dp),
+                    modifier = Modifier.fillMaxWidth().padding(12.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Icon(
@@ -115,64 +106,16 @@ fun AlarmsScreen(
 
                     Spacer(modifier = Modifier.height(10.dp))
 
-                    // Clickable Date Picker
-                    AlarmOptionItem(Icons.Default.DateRange,
-                        stringResource(R.string.date), selectedDate) {
-                        showDatePicker(context) { selectedDate = it }
+                    AlarmOptionItem(Icons.Default.DateRange, stringResource(R.string.date), SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(selectedDate.time)) {
+                        showDatePicker(context) { date -> selectedDate = date }
                     }
 
-                    // Clickable Start Time Picker
                     AlarmOptionItem(Icons.Default.Notifications,
-                        stringResource(R.string.start_duration), startTime) {
-                        showTimePicker(context) { startTime = it }
+                        stringResource(R.string.start_duration), SimpleDateFormat("hh:mm a", Locale.getDefault()).format(selectedTime.time)) {
+                        showTimePicker(context) { time -> selectedTime = time }
                     }
 
-                    // Clickable End Time Picker
-                    AlarmOptionItem(Icons.Default.Notifications,
-                        stringResource(R.string.end_duration), endTime) {
-                        showTimePicker(context) { endTime = it }
-                    }
-
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = stringResource(R.string.notify_me_by),
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontSize = 18.sp,
-                            fontWeight = FontWeight.Bold,
-                            color = colorResource(R.color.white),
-                        )
-                        RadioButton(
-                            selected = selectedNotifyMe == "Alarm",
-                            onClick = { selectedNotifyMe = "Alarm" },
-                            colors = RadioButtonDefaults.colors(selectedColor = colorResource(R.color.primaryColor), unselectedColor = colorResource(R.color.white))
-                        )
-                        Text(
-                            text = stringResource(R.string.alarm),
-                            color = colorResource(R.color.white),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.clickable { selectedNotifyMe = "Alarm" }
-                        )
-
-                        RadioButton(
-                            selected = selectedNotifyMe == "Notification",
-                            onClick = { selectedNotifyMe = "Notification" },
-                            colors = RadioButtonDefaults.colors(selectedColor = colorResource(R.color.primaryColor), unselectedColor = colorResource(R.color.white))
-                        )
-                        Text(
-                            text = stringResource(R.string.notification),
-                            color = colorResource(R.color.white),
-                            fontSize = 16.sp,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.clickable { selectedNotifyMe = "Notification" }
-                        )
-                    }
+                    Spacer(modifier = Modifier.height(10.dp))
 
                     Row(
                         modifier = Modifier.fillMaxWidth(),
@@ -187,8 +130,26 @@ fun AlarmsScreen(
                         }
                         Spacer(modifier = Modifier.width(16.dp))
                         Button(
-                            onClick = { /* Set reminder logic */ },
-                            enabled = true,
+                            onClick = {
+                                val now = Calendar.getInstance().timeInMillis
+                                val notificationTime = Calendar.getInstance().apply {
+                                    set(Calendar.YEAR, selectedDate.get(Calendar.YEAR))
+                                    set(Calendar.MONTH, selectedDate.get(Calendar.MONTH))
+                                    set(Calendar.DAY_OF_MONTH, selectedDate.get(Calendar.DAY_OF_MONTH))
+                                    set(Calendar.HOUR_OF_DAY, selectedTime.get(Calendar.HOUR_OF_DAY))
+                                    set(Calendar.MINUTE, selectedTime.get(Calendar.MINUTE))
+                                    set(Calendar.SECOND, 0)
+                                }.timeInMillis
+
+                                val delayInMillis = notificationTime - now
+
+                                if (delayInMillis > 0) {
+                                    scheduleNotification(context, delayInMillis)
+                                    showAlarmsBottomSheet.value = false
+                                } else {
+                                    Toast.makeText(context, context.getString(R.string.please_select_a_valid_future_time), Toast.LENGTH_SHORT).show()
+                                }
+                            },
                             colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.primaryColor))
                         ) {
                             Text(stringResource(R.string.save))
@@ -230,7 +191,7 @@ fun AlarmOptionItem(
 }
 
 
-fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
+fun showDatePicker(context: Context, onDateSelected: (Calendar) -> Unit) {
     val calendar = Calendar.getInstance()
 
     val datePickerDialog = DatePickerDialog(
@@ -240,29 +201,19 @@ fun showDatePicker(context: Context, onDateSelected: (String) -> Unit) {
             val selectedCalendar = Calendar.getInstance().apply {
                 set(year, month, dayOfMonth)
             }
-
-            // Check the current locale
-            val locale = if (Locale.getDefault().language == "ar") Locale("ar") else Locale.getDefault()
-
-            // Format the date according to the selected locale
-            val dateFormat = SimpleDateFormat("dd/MM/yyyy", locale)
-            val formattedDate = dateFormat.format(selectedCalendar.time)
-
-            onDateSelected(formattedDate)
+            onDateSelected(selectedCalendar) // Pass the full Calendar object
         },
         calendar.get(Calendar.YEAR),
         calendar.get(Calendar.MONTH),
         calendar.get(Calendar.DAY_OF_MONTH)
     )
 
-    // Disable past dates
-    datePickerDialog.datePicker.minDate = calendar.timeInMillis
-
+    datePickerDialog.datePicker.minDate = calendar.timeInMillis // Disable past dates
     datePickerDialog.show()
 }
 
 
-fun showTimePicker(context: Context, onTimeSelected: (String) -> Unit) {
+fun showTimePicker(context: Context, onTimeSelected: (Calendar) -> Unit) {
     val calendar = Calendar.getInstance()
     val currentHour = calendar.get(Calendar.HOUR_OF_DAY)
     val currentMinute = calendar.get(Calendar.MINUTE)
@@ -271,23 +222,11 @@ fun showTimePicker(context: Context, onTimeSelected: (String) -> Unit) {
         context,
         R.style.CustomTimePickerDialog, // Apply the custom style
         { _, hourOfDay, minute ->
-            // Ensure selected time is at least 1 minute ahead of current time
-            if (hourOfDay < currentHour || (hourOfDay == currentHour && minute <= currentMinute)) {
-                Toast.makeText(context,
-                    context.getString(R.string.please_select_a_valid_future_time), Toast.LENGTH_SHORT).show()
-                showTimePicker(context, onTimeSelected) // Reopen picker
-            } else {
-                val selectedCalendar = Calendar.getInstance().apply {
-                    set(Calendar.HOUR_OF_DAY, hourOfDay)
-                    set(Calendar.MINUTE, minute)
-                }
-
-                // Format time with AM/PM
-                val timeFormat = SimpleDateFormat("hh:mm a", Locale.getDefault())
-                val formattedTime = timeFormat.format(selectedCalendar.time)
-
-                onTimeSelected(formattedTime)
+            val selectedCalendar = Calendar.getInstance().apply {
+                set(Calendar.HOUR_OF_DAY, hourOfDay)
+                set(Calendar.MINUTE, minute)
             }
+            onTimeSelected(selectedCalendar) // Pass the full Calendar object
         },
         currentHour,
         currentMinute + 1, // Start at least 1 minute ahead
