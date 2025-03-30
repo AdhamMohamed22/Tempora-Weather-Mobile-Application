@@ -123,19 +123,26 @@ fun AlarmsScreen(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DisplayAlarmsScreen(viewModel: AlarmsScreenViewModel, showAlarmsBottomSheet: MutableState<Boolean>, alarmsList: List<Alarm>, deleteAction: (Alarm)-> Unit, snackBarHostState: SnackbarHostState){
-
+fun DisplayAlarmsScreen(
+    viewModel: AlarmsScreenViewModel,
+    showAlarmsBottomSheet: MutableState<Boolean>,
+    alarmsList: List<Alarm>,
+    deleteAction: (Alarm) -> Unit,
+    snackBarHostState: SnackbarHostState
+) {
     val context = LocalContext.current
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var selectedDate by remember { mutableStateOf(Calendar.getInstance()) }
     var selectedTime by remember { mutableStateOf(Calendar.getInstance()) }
 
     Column(
-        modifier = Modifier.fillMaxSize().background(colorResource(R.color.white)),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colorResource(R.color.white)),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        if(alarmsList.isEmpty()){
+        if (alarmsList.isEmpty()) {
             Image(
                 painter = painterResource(id = R.drawable.noalarms),
                 contentDescription = "No Alarms Image",
@@ -148,86 +155,103 @@ fun DisplayAlarmsScreen(viewModel: AlarmsScreenViewModel, showAlarmsBottomSheet:
                 color = colorResource(R.color.primaryColor),
                 fontWeight = FontWeight.Bold
             )
+        } else {
+            ListOfAlarmsCards(alarmsList, deleteAction, viewModel)
+        }
+    }
 
-            if (showAlarmsBottomSheet.value) {
-                ModalBottomSheet(
-                    onDismissRequest = { showAlarmsBottomSheet.value = false },
-                    sheetState = sheetState,
-                    containerColor = colorResource(R.color.secondaryColor)
+    // ✅ Always show the modal sheet when `showAlarmsBottomSheet.value` is true
+    if (showAlarmsBottomSheet.value) {
+        ModalBottomSheet(
+            onDismissRequest = { showAlarmsBottomSheet.value = false },
+            sheetState = sheetState,
+            containerColor = colorResource(R.color.secondaryColor)
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.alarm),
+                    contentDescription = null,
+                    tint = Color.Unspecified,
+                    modifier = Modifier.size(50.dp)
+                )
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                AlarmOptionItem(
+                    Icons.Default.DateRange,
+                    stringResource(R.string.date),
+                    SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(selectedDate.time)
                 ) {
-                    Column(
-                        modifier = Modifier.fillMaxWidth().padding(12.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                    showDatePicker(context) { date -> selectedDate = date }
+                }
+
+                AlarmOptionItem(
+                    Icons.Default.Notifications,
+                    stringResource(R.string.start_duration),
+                    SimpleDateFormat("hh:mm a", Locale.getDefault()).format(selectedTime.time)
+                ) {
+                    showTimePicker(context) { time -> selectedTime = time }
+                }
+
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Button(
+                        onClick = { showAlarmsBottomSheet.value = false },
+                        colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.red))
                     ) {
-                        Icon(
-                            painter = painterResource(R.drawable.alarm),
-                            contentDescription = null,
-                            tint = Color.Unspecified,
-                            modifier = Modifier.size(50.dp)
-                        )
+                        Text(stringResource(R.string.cancel))
+                    }
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Button(
+                        onClick = {
+                            val now = Calendar.getInstance().timeInMillis
+                            val notificationTime = Calendar.getInstance().apply {
+                                set(Calendar.YEAR, selectedDate.get(Calendar.YEAR))
+                                set(Calendar.MONTH, selectedDate.get(Calendar.MONTH))
+                                set(Calendar.DAY_OF_MONTH, selectedDate.get(Calendar.DAY_OF_MONTH))
+                                set(Calendar.HOUR_OF_DAY, selectedTime.get(Calendar.HOUR_OF_DAY))
+                                set(Calendar.MINUTE, selectedTime.get(Calendar.MINUTE))
+                                set(Calendar.SECOND, 0)
+                            }.timeInMillis
 
-                        Spacer(modifier = Modifier.height(10.dp))
+                            val delayInMillis = notificationTime - now
 
-                        AlarmOptionItem(Icons.Default.DateRange, stringResource(R.string.date), SimpleDateFormat("dd/MM/yyyy", Locale.getDefault()).format(selectedDate.time)) {
-                            showDatePicker(context) { date -> selectedDate = date }
-                        }
-
-                        AlarmOptionItem(Icons.Default.Notifications,
-                            stringResource(R.string.start_duration), SimpleDateFormat("hh:mm a", Locale.getDefault()).format(selectedTime.time)) {
-                            showTimePicker(context) { time -> selectedTime = time }
-                        }
-
-                        Spacer(modifier = Modifier.height(10.dp))
-
-                        Row(
-                            modifier = Modifier.fillMaxWidth(),
-                            horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Button(
-                                onClick = { showAlarmsBottomSheet.value = false },
-                                colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.red))
-                            ) {
-                                Text(stringResource(R.string.cancel))
+                            if (delayInMillis > 0) {
+                                val alarm = Alarm(
+                                    selectedDate = selectedDate.toFormattedString("yyyy-MM-dd"),
+                                    selectedTime = selectedTime.toFormattedString("hh:mm a")
+                                )
+                                viewModel.insertAlarm(alarm)
+                                scheduleNotification(context, delayInMillis)
+                                showAlarmsBottomSheet.value = false
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.please_select_a_valid_future_time),
+                                    Toast.LENGTH_SHORT
+                                ).show()
                             }
-                            Spacer(modifier = Modifier.width(16.dp))
-                            Button(
-                                onClick = {
-
-                                    val now = Calendar.getInstance().timeInMillis
-                                    val notificationTime = Calendar.getInstance().apply {
-                                        set(Calendar.YEAR, selectedDate.get(Calendar.YEAR))
-                                        set(Calendar.MONTH, selectedDate.get(Calendar.MONTH))
-                                        set(Calendar.DAY_OF_MONTH, selectedDate.get(Calendar.DAY_OF_MONTH))
-                                        set(Calendar.HOUR_OF_DAY, selectedTime.get(Calendar.HOUR_OF_DAY))
-                                        set(Calendar.MINUTE, selectedTime.get(Calendar.MINUTE))
-                                        set(Calendar.SECOND, 0)
-                                    }.timeInMillis
-
-                                    val delayInMillis = notificationTime - now
-
-                                    if (delayInMillis > 0) {
-                                        val alarm = Alarm(selectedDate = selectedDate.toFormattedString("yyyy-MM-dd"),selectedTime = selectedTime.toFormattedString("hh:mm a"))
-                                        viewModel.insertAlarm(alarm)
-                                        scheduleNotification(context, delayInMillis)
-                                        showAlarmsBottomSheet.value = false
-                                    } else {
-                                        Toast.makeText(context, context.getString(R.string.please_select_a_valid_future_time), Toast.LENGTH_SHORT).show()
-                                    }
-                                },
-                                colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.primaryColor))
-                            ) {
-                                Text(stringResource(R.string.save))
-                            }
-                        }
+                        },
+                        colors = ButtonDefaults.buttonColors(containerColor = colorResource(R.color.primaryColor))
+                    ) {
+                        Text(stringResource(R.string.save))
                     }
                 }
             }
-        } else {
-            ListOfAlarmsCards(alarmsList,deleteAction,viewModel)
         }
     }
 }
+
 
 @Composable
 fun AlarmOptionItem(
