@@ -48,6 +48,7 @@ import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.rememberNavController
 import com.example.tempora.composables.alarms.notification.createNotificationChannel
+import com.example.tempora.composables.alarms.notification.stopNotificationSound
 import com.example.tempora.composables.settings.utils.LocalizationHelper
 import com.example.tempora.composables.settings.PreferencesManager
 import com.example.tempora.composables.splashscreen.SplashScreen
@@ -88,6 +89,9 @@ class MainActivity : ComponentActivity() {
         if (notificationId != -1) {
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.cancel(notificationId) // Cancel the notification
+
+            // Stop the alarm sound
+            stopNotificationSound()
         }
 
         val preferencesManager = PreferencesManager.getInstance(this)

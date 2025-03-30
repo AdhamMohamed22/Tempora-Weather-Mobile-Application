@@ -27,11 +27,13 @@ fun showNotification(context: Context, result: CurrentWeather) {
         context, 0, stopSoundIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 
-    // Intent to stop sound, open MainActivity, and remove notification
-    val openIntent = Intent(context, StopSoundReceiver::class.java).apply {
-        putExtra("open_main", true)
+    // Intent to open MainActivity (with stop sound logic)
+    val openIntent = Intent(context, MainActivity::class.java).apply {
+        flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
+        putExtra("notification_id", NOTIFICATION_ID) // Pass notification ID
     }
-    val openPendingIntent = PendingIntent.getBroadcast(
+
+    val openPendingIntent = PendingIntent.getActivity(
         context, 1, openIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 
@@ -44,8 +46,8 @@ fun showNotification(context: Context, result: CurrentWeather) {
         .setContentText("Location's Description: ${result.weather[0].description}")
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .addAction(R.drawable.tempora, "Open", openPendingIntent) // Open MainActivity
-        .addAction(R.drawable.tempora, "Cancel", stopSoundPendingIntent) // Stop Sound & Dismiss
-        .setAutoCancel(true) // Auto remove when clicked
+        .addAction(R.drawable.tempora, "Cancel", stopSoundPendingIntent) // Stop Sound & Remove Notification
+        .setAutoCancel(true) // Remove notification when clicked
         .build()
 
     with(NotificationManagerCompat.from(context)) {
