@@ -1,5 +1,6 @@
 package com.example.tempora.data.response_state
 
+import com.example.tempora.data.models.Alarm
 import com.example.tempora.data.models.CurrentWeather
 import com.example.tempora.data.models.FavouriteLocation
 import com.example.tempora.data.models.ForecastWeather
@@ -21,4 +22,10 @@ sealed class FavouriteLocationsResponseState {
     data object Loading: FavouriteLocationsResponseState()
     data class Success(val favouriteLocations: List<FavouriteLocation> ): FavouriteLocationsResponseState()
     data class Failed(val error: Throwable): FavouriteLocationsResponseState()
+}
+
+sealed class AlarmsResponseState {
+    data object Loading: AlarmsResponseState()
+    data class Success(val alarms: List<Alarm> ): AlarmsResponseState()
+    data class Failed(val error: Throwable): AlarmsResponseState()
 }

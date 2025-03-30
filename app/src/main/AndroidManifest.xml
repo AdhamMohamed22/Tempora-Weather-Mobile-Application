@@ -17,13 +17,21 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.TEMPORA"
         tools:targetApi="31">
-<!--        <service-->
-<!--            android:name=".composables.alarms.service.NotificationService"-->
-<!--            android:enabled="true"-->
-<!--            android:exported="true"></service>-->
+        <receiver
+            android:name=".composables.alarms.notification.sound.StopSoundReceiver"
+            android:enabled="true"
+            android:exported="true"></receiver>
 
+        <service
+            android:name=".composables.alarms.notification.sound.NotificationSoundService"
+            android:enabled="true"
+            android:exported="true" /> <!-- <service -->
+        <!-- android:name=".composables.alarms.service.NotificationService" -->
+        <!-- android:enabled="true" -->
+        <!-- android:exported="true"></service> -->
         <!-- Register the BroadcastReceiver -->
-        <receiver android:name=".composables.alarms.notification.broadcastreciever.NotificationReceiver"
+        <receiver
+            android:name=".composables.alarms.notification.broadcastreciever.NotificationReceiver"
             android:exported="false" />
 
         <activity
@@ -36,9 +44,7 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- Register the Api-Key -->
+        </activity> <!-- Register the Api-Key -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyCrz8arZ9O88eZgIHCNnHv-fBTv93nlggg" />
