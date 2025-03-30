@@ -1,6 +1,7 @@
 package com.example.tempora.data.repository
 
 import com.example.tempora.data.local.WeatherLocalDataSource
+import com.example.tempora.data.models.Alarm
 import com.example.tempora.data.models.CurrentWeather
 import com.example.tempora.data.models.FavouriteLocation
 import com.example.tempora.data.models.ForecastWeather
@@ -27,6 +28,18 @@ class Repository(private val remoteDataSource: WeatherRemoteDataSource,private v
 
     override suspend fun deleteFavouriteLocation(favouriteLocation: FavouriteLocation) {
         localDataSource.deleteFavouriteLocation(favouriteLocation)
+    }
+
+    override suspend fun insertAlarm(alarm: Alarm) {
+        localDataSource.insertAlarm(alarm)
+    }
+
+    override suspend fun getAllAlarms(): Flow<List<Alarm>> {
+        return localDataSource.getAllAlarms()
+    }
+
+    override suspend fun deleteAlarm(alarm: Alarm) {
+        localDataSource.deleteAlarm(alarm)
     }
 
     companion object {

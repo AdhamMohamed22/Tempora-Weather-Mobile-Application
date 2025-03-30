@@ -130,7 +130,7 @@ fun DisplayFavouritesScreen(viewModel: FavouritesScreenViewModel, favouritesLoca
             Image(
                 painter = painterResource(id = R.drawable.nofavourites),
                 contentDescription = "No Favourites Image",
-                modifier = Modifier.size(200.dp)
+                modifier = Modifier.size(300.dp)
             )
             Spacer(Modifier.height(20.dp))
             Text(

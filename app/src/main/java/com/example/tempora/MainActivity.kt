@@ -1,6 +1,7 @@
 package com.example.tempora
 
 import android.annotation.SuppressLint
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -33,6 +34,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +47,7 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import androidx.core.app.ActivityCompat
 import androidx.navigation.compose.rememberNavController
+import com.example.tempora.composables.alarms.notification.createNotificationChannel
 import com.example.tempora.composables.settings.utils.LocalizationHelper
 import com.example.tempora.composables.settings.PreferencesManager
 import com.example.tempora.composables.splashscreen.SplashScreen
@@ -75,6 +78,18 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //Notification
+        createNotificationChannel(this)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
+        }
+        // Check if the activity was opened from a notification
+        val notificationId = intent.getIntExtra("notification_id", -1)
+        if (notificationId != -1) {
+            val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.cancel(notificationId) // Cancel the notification
+        }
+
         val preferencesManager = PreferencesManager.getInstance(this)
         // Use runBlocking to get the saved language synchronously
         val savedLanguage = runBlocking {
@@ -92,6 +107,21 @@ class MainActivity : ComponentActivity() {
             } else {
                 MainScreen(locationState.value)
             }
+
+
+            // Notification
+            val navController = rememberNavController()
+            val deepLinkUri = intent?.data?.toString()
+            LaunchedEffect(deepLinkUri) {
+                deepLinkUri?.let { uri ->
+                    if (uri.startsWith("D:\\TEMPORA Project\\TEMPORA\\app\\src\\main\\java\\com\\example\\tempora\\composables\\home")) {
+                        navController.navigate("Home Screen")
+                    }
+                }
+            }
+
+//            val serviceIntent = Intent(this, NotificationService::class.java)
+//            startService(serviceIntent)
         }
     }
 

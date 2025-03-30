@@ -51,7 +51,7 @@ fun SetupAppNavigation(
             )
         }
 
-        composable(ScreenRoutes.Alarms.route) { AlarmsScreen(showFAB,favouritesFAB,showAlarmsBottomSheet,context) }
+        composable(ScreenRoutes.Alarms.route) { AlarmsScreen(showFAB,favouritesFAB,showAlarmsBottomSheet,snackBarHostState) }
         composable(ScreenRoutes.Settings.route) { SettingsScreen(showFAB, navigationAction = { navController.navigate("MapScreen/${false}")}) }
 
         composable("FavouritesDetailsScreen?favouriteLocation={favouriteLocation}") { backStackEntry ->

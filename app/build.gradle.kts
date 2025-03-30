@@ -113,5 +113,7 @@ dependencies {
 
     //Datastore Preferences
     implementation("androidx.datastore:datastore-preferences:1.0.0")
+    //Kotlin + workManager
+    implementation("androidx.work:work-runtime-ktx:2.7.1")
 
 }
