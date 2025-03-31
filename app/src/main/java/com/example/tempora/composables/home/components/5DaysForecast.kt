@@ -97,13 +97,12 @@ fun WeekDayCard(dayForecast: Item0, selectedUnit: String) {
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun ListOf5WeekDaysCards(fiveDaysList: List<Item0>, selectedUnit: String) {
-    LazyColumn(
-        modifier = Modifier.wrapContentSize(Alignment.Center),
-    )
-    {
-        items(fiveDaysList.size)
-        {
-            WeekDayCard(fiveDaysList[it], selectedUnit)
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        fiveDaysList.forEach { item ->
+            WeekDayCard(item, selectedUnit)
         }
     }
 }

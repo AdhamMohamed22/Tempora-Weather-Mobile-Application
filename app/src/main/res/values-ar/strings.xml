@@ -27,7 +27,7 @@
     <string name="nothing_has_been_added_to_favourites_yet">لم يتم اضافة شى في المفضلة!</string>
     <string name="latitude">دوائر العرض: %1$s</string>
     <string name="longitude">خطوط الطول: %1$s</string>
-    <string name="delete">مسح</string>
+    <string name="delete">حذف</string>
     <string name="please_select_a_valid_future_time">برجاء تحديد وقت صالح في المستقبل!</string>
     <string name="no_alarms_has_been_added_yet">لم يتم اضافة شى في التنبيهات!</string>
     <string name="date">التاريخ</string>
@@ -38,4 +38,8 @@
     <string name="notification">إشعار</string>
     <string name="cancel">إلغاء</string>
     <string name="save">حفظ</string>
+    <string name="network_connection_lost">تم فقد الاتصال بالانترنت!</string>
+    <string name="location_deleted_successfully">تم حذف المكان بنجاح!</string>
+    <string name="location_restored_successfully">تم استرجاع المكان المحذوف بنجاح!</string>
+    <string name="location_added_successfully">تم اضافة المكان الى المفضلة!</string>
 </resources>

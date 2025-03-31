@@ -1,6 +1,7 @@
 package com.example.tempora.data.repository
 
 import com.example.tempora.data.models.Alarm
+import com.example.tempora.data.models.CashedWeather
 import com.example.tempora.data.models.CurrentWeather
 import com.example.tempora.data.models.FavouriteLocation
 import com.example.tempora.data.models.ForecastWeather
@@ -10,6 +11,9 @@ interface IRepository {
 
     suspend fun getCurrentWeather(lat: Double,lon: Double,appid: String,units: String?,language: String): Flow<CurrentWeather>
     suspend fun getForecastWeather(lat: Double,lon: Double,appid: String,units: String?,language: String): Flow<ForecastWeather>
+
+    suspend fun insertCashedWeather(cashedWeather: CashedWeather)
+    suspend fun getCashedWeather(): Flow<CashedWeather>
 
     suspend fun insertFavouriteLocation(favouriteLocation: FavouriteLocation)
     suspend fun getAllFavouriteLocations(): Flow<List<FavouriteLocation>>

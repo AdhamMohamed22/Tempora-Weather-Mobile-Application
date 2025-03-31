@@ -7,6 +7,8 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -81,6 +83,8 @@ fun FavouritesDetailsScreen(showFAB: MutableState<Boolean>, favouriteLocation: F
         viewModel.get5DaysForecastWeather(favouriteLocation.latitude,favouriteLocation.longitude,context)
     }
 
+    val isLoading = currentWeatherState is CurrentWeatherResponseState.Loading || todayForecastWeatherState is ForecastWeatherResponseState.Loading || daysForecastWeather is ForecastWeatherResponseState.Loading
+
     Box(modifier = Modifier.fillMaxSize())
     {
         // Background Image
@@ -94,28 +98,34 @@ fun FavouritesDetailsScreen(showFAB: MutableState<Boolean>, favouriteLocation: F
         )
         // Foreground UI elements
         Column(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            when (currentWeatherState){
-                is CurrentWeatherResponseState.Loading -> LoadingIndicator()
-                is CurrentWeatherResponseState.Failed -> { DisplayCurrentWeather(favouriteLocation.currentWeather,selectedUnit) }
-                is CurrentWeatherResponseState.Success -> { val currentWeather = (currentWeatherState as CurrentWeatherResponseState.Success).currentWeather
-                    DisplayCurrentWeather(currentWeather, selectedUnit) }
-            }
+            if(isLoading){
+                LoadingIndicator()
+            } else {
+                when (currentWeatherState){
+                    is CurrentWeatherResponseState.Loading -> {}
+                    is CurrentWeatherResponseState.Failed -> { DisplayCurrentWeather(favouriteLocation.currentWeather,selectedUnit) }
+                    is CurrentWeatherResponseState.Success -> { val currentWeather = (currentWeatherState as CurrentWeatherResponseState.Success).currentWeather
+                        DisplayCurrentWeather(currentWeather, selectedUnit) }
+                }
 
-            when(todayForecastWeatherState){
-                is ForecastWeatherResponseState.Loading -> LoadingIndicator()
-                is ForecastWeatherResponseState.Failed -> { ListOfHourCards(favouriteLocation.forecastWeather.list.subList(0,8),selectedUnit) }
-                is ForecastWeatherResponseState.Success -> { val todayForecast = (todayForecastWeatherState as ForecastWeatherResponseState.Success).forecastWeather
-                    ListOfHourCards(todayForecast,selectedUnit) }
-            }
+                when(todayForecastWeatherState){
+                    is ForecastWeatherResponseState.Loading -> {}
+                    is ForecastWeatherResponseState.Failed -> { ListOfHourCards(favouriteLocation.forecastWeather.list.subList(0,8),selectedUnit) }
+                    is ForecastWeatherResponseState.Success -> { val todayForecast = (todayForecastWeatherState as ForecastWeatherResponseState.Success).forecastWeather
+                        ListOfHourCards(todayForecast,selectedUnit) }
+                }
 
-            when(daysForecastWeather){
-                is ForecastWeatherResponseState.Loading -> LoadingIndicator()
-                is ForecastWeatherResponseState.Failed -> { Display5DaysForecastOffline(favouriteLocation.forecastWeather.list,selectedUnit) }
-                is ForecastWeatherResponseState.Success -> { val fiveDaysList = (daysForecastWeather as ForecastWeatherResponseState.Success).forecastWeather
-                    ListOf5WeekDaysCards(fiveDaysList,selectedUnit) }
+                when(daysForecastWeather){
+                    is ForecastWeatherResponseState.Loading -> {}
+                    is ForecastWeatherResponseState.Failed -> { Display5DaysForecastOffline(favouriteLocation.forecastWeather.list,selectedUnit) }
+                    is ForecastWeatherResponseState.Success -> { val fiveDaysList = (daysForecastWeather as ForecastWeatherResponseState.Success).forecastWeather
+                        ListOf5WeekDaysCards(fiveDaysList,selectedUnit) }
+                }
             }
         }
     }

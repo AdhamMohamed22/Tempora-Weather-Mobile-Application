@@ -92,7 +92,7 @@ fun FavouritesScreen(
         is FavouriteLocationsResponseState.Success -> DisplayFavouritesScreen(
             viewModel = viewModel,
             favouritesLocationsList = (favouriteLocationState as FavouriteLocationsResponseState.Success).favouriteLocations,
-            deleteAction = { viewModel.deleteFavouriteLocation(it) },
+            deleteAction = { viewModel.deleteFavouriteLocation(it,context) },
             snackBarHostState = snackBarHostState,
             navigationAction = { navigationAction(it) }
         )
@@ -114,7 +114,7 @@ fun DisplayFavouritesScreen(viewModel: FavouritesScreenViewModel, favouritesLoca
             )
             if (snackBarResult == SnackbarResult.ActionPerformed) {
                 // User clicked "Undo", restore the deleted location
-                viewModel.restoreFavouriteLocation()
+                viewModel.restoreFavouriteLocation(context)
             }
         }
     }

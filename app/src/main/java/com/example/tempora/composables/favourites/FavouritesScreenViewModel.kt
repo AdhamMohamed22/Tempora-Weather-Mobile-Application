@@ -1,9 +1,11 @@
 package com.example.tempora.composables.favourites
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.tempora.R
 import com.example.tempora.data.models.FavouriteLocation
 import com.example.tempora.data.repository.Repository
 import com.example.tempora.data.response_state.FavouriteLocationsResponseState
@@ -50,23 +52,23 @@ class FavouritesScreenViewModel(private val repository: Repository): ViewModel()
         }
     }
 
-    fun deleteFavouriteLocation(favouriteLocation: FavouriteLocation){
+    fun deleteFavouriteLocation(favouriteLocation: FavouriteLocation,context: Context){
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 deletedFavoriteLocation = favouriteLocation
                 repository.deleteFavouriteLocation(favouriteLocation)
-                mutableMessage.emit("Location Deleted Successfully!")
+                mutableMessage.emit(context.getString(R.string.location_deleted_successfully))
             } catch (ex: Exception){
                 mutableMessage.emit("Couldn't Delete Location From Favourites ${ex.message}")
             }
         }
     }
 
-    fun restoreFavouriteLocation() {
+    fun restoreFavouriteLocation(context: Context) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 repository.insertFavouriteLocation(deletedFavoriteLocation!!)
-                mutableMessage.emit("Location Restored Successfully!")
+                mutableMessage.emit(context.getString(R.string.location_restored_successfully))
             } catch (ex: Exception) {
                 mutableMessage.emit("Couldn't Restore Location: ${ex.message}")
             }

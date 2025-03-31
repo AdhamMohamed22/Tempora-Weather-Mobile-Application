@@ -6,11 +6,18 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.tempora.data.models.Alarm
+import com.example.tempora.data.models.CashedWeather
 import com.example.tempora.data.models.FavouriteLocation
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface WeatherDao {
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCashedWeather(cashedWeather: CashedWeather)
+
+    @Query("SELECT * FROM cashedWeather")
+    fun getCashedWeather(): Flow<CashedWeather>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFavouriteLocation(favouriteLocation: FavouriteLocation)

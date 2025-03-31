@@ -8,7 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.tempora.BuildConfig
+import com.example.tempora.R
 import com.example.tempora.composables.settings.PreferencesManager
+import com.example.tempora.data.models.CashedWeather
+import com.example.tempora.data.models.CurrentWeather
+import com.example.tempora.data.models.ForecastWeather
 import com.example.tempora.data.repository.Repository
 import com.example.tempora.data.response_state.CurrentWeatherResponseState
 import com.example.tempora.data.response_state.ForecastWeatherResponseState
@@ -51,12 +55,16 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
     private val mutableSelectedUnit = MutableStateFlow("°K")
     val selectedUnit = mutableSelectedUnit.asStateFlow()
 
+    private var tempCurrentWeather: CurrentWeather? = null
+    private var tempForecastWeather: ForecastWeather? = null
+
 //    init {
 //        getCurrentWeather()
 //        getForecastWeather()
 //    }
 
-    fun getCurrentWeather(lat: Double,lon: Double,context: Context){
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getCurrentWeather(lat: Double, lon: Double, context: Context){
         viewModelScope.launch(Dispatchers.IO){
             val selectedUnit = PreferencesManager.getInstance(context).getPreference(
                 PreferencesManager.TEMPERATURE_UNIT_KEY,"Kelvin °K").first()
@@ -71,9 +79,12 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
 
             try {
                 val result = repository.getCurrentWeather(lat,lon,BuildConfig.appidSafe,units,language)
+                tempCurrentWeather = result.first()
+                insertCashedWeather(tempCurrentWeather,null)
+
                 result
                     .catch {
-                            ex -> mutableCurrentWeather.value = CurrentWeatherResponseState.Failed(ex)
+                        ex -> mutableCurrentWeather.value = CurrentWeatherResponseState.Failed(ex)
                         mutableMessage.emit(ex.message.toString()) }
                     .collect{
                         mutableCurrentWeather.value = CurrentWeatherResponseState.Success(it)
@@ -81,16 +92,18 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
                     }
             } catch (ex: Exception){
                 mutableMessage.emit("An Error Occurred!, ${ex.message}")
-                mutableCurrentWeather.value = CurrentWeatherResponseState.Failed(ex)
+                getCachedWeather(context)  // Fetch from Room DB if API call fails
+                //mutableCurrentWeather.value = CurrentWeatherResponseState.Failed(ex)
             }
         }
     }
 
-    fun getTodayForecastWeather(lat: Double,lon: Double,context: Context){
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun getTodayForecastWeather(lat: Double, lon: Double, context: Context){
         viewModelScope.launch(Dispatchers.IO) {
             val selectedUnit = PreferencesManager.getInstance(context).getPreference(
                 PreferencesManager.TEMPERATURE_UNIT_KEY,"Kelvin °K").first()
-            val units = com.example.tempora.utils.getTemperatureUnit(selectedUnit)
+            val units = getTemperatureUnit(selectedUnit)
 
             val selectedLanguage = PreferencesManager.getInstance(context).getPreference(
                 PreferencesManager.LANGUAGE_KEY, "English").first()
@@ -98,6 +111,9 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
 
             try {
                 val result = repository.getForecastWeather(lat,lon,BuildConfig.appidSafe,units,language)
+                tempForecastWeather = result.first()
+                insertCashedWeather(null,tempForecastWeather)
+
                 result
                     .catch {
                             ex -> mutableTodayForecastWeather.value = ForecastWeatherResponseState.Failed(ex)
@@ -109,7 +125,7 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
                     }
             } catch (ex: Exception){
                 //mutableMessage.emit("An Error Occurred!, ${ex.message}")
-                mutableTodayForecastWeather.value = ForecastWeatherResponseState.Failed(ex)
+                //mutableTodayForecastWeather.value = ForecastWeatherResponseState.Failed(ex)
                 Log.i("TAG", "getForecastWeather: ${ex.message}")
             }
         }
@@ -124,7 +140,7 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             val selectedUnit = PreferencesManager.getInstance(context).getPreference(
                 PreferencesManager.TEMPERATURE_UNIT_KEY,"Kelvin °K").first()
-            val units = com.example.tempora.utils.getTemperatureUnit(selectedUnit)
+            val units = getTemperatureUnit(selectedUnit)
 
             val selectedLanguage = PreferencesManager.getInstance(context).getPreference(
                 PreferencesManager.LANGUAGE_KEY, "English").first()
@@ -134,7 +150,7 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
                 val result = repository.getForecastWeather(lat,lon,BuildConfig.appidSafe,units,language)
                 result
                     .catch {
-                            ex -> mutable5DaysForecastWeather.value = ForecastWeatherResponseState.Failed(ex)
+                        ex -> mutable5DaysForecastWeather.value = ForecastWeatherResponseState.Failed(ex)
                         mutableMessage.emit(ex.message.toString()) }
                     .map { it -> it.list
                         .filter { item0 -> item0.dt_txt.substringBefore(" ") != todayFormattedDate } // Exclude today's forecast
@@ -147,9 +163,78 @@ class HomeScreenViewModel(private val repository: Repository) : ViewModel() {
                     }
             } catch (ex: Exception){
                 //mutableMessage.emit("An Error Occurred!, ${ex.message}")
-                mutable5DaysForecastWeather.value = ForecastWeatherResponseState.Failed(ex)
+                //mutable5DaysForecastWeather.value = ForecastWeatherResponseState.Failed(ex)
                 Log.i("TAG", "getForecastWeather: ${ex.message}")
             }
         }
     }
+
+    private fun insertCashedWeather(cashedCurrentWeather: CurrentWeather?, cashedForecastWeather: ForecastWeather?) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                // Store cashed values
+                cashedCurrentWeather?.let { tempCurrentWeather = it }
+                cashedForecastWeather?.let { tempForecastWeather = it }
+
+                // Insert into database only when both values are available
+                if (tempCurrentWeather != null && tempForecastWeather != null) {
+                    val cashedWeather = CashedWeather(
+                        currentWeather = tempCurrentWeather!!,
+                        forecastWeather = tempForecastWeather!!
+                    )
+                    repository.insertCashedWeather(cashedWeather)
+
+                    // Reset temporary storage after insertion
+                    tempCurrentWeather = null
+                    tempForecastWeather = null
+                }
+            } catch (ex: Exception){
+                mutableMessage.emit("An Error Occurred!, ${ex.message}")
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getCachedWeather(context: Context) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                val cachedWeather = repository.getCashedWeather().first()
+                if (cachedWeather != null) {
+                    // Load cached current weather
+                    mutableCurrentWeather.value = CurrentWeatherResponseState.Success(cachedWeather.currentWeather)
+
+                    // Load cached today's forecast
+                    mutableTodayForecastWeather.value = ForecastWeatherResponseState.Success(
+                        cachedWeather.forecastWeather.list.take(8) // Take today's forecast
+                    )
+
+                    // Load cached 5-day forecast
+                    val today = LocalDate.now(ZoneId.of("Africa/Cairo"))
+                    val todayFormattedDate = today.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+
+                    val filteredForecast = cachedWeather.forecastWeather.list
+                        .filter { item -> item.dt_txt.substringBefore(" ") != todayFormattedDate }
+                        .groupBy { item -> item.dt_txt.substringBefore(" ") }
+                        .map { (_, items) -> items.first() }
+
+                    mutable5DaysForecastWeather.value = ForecastWeatherResponseState.Success(filteredForecast)
+
+                    mutableMessage.emit(context.getString(R.string.network_connection_lost))
+                    Log.i("TAG", "Loaded cached weather: $cachedWeather")
+                } else {
+                    mutableMessage.emit("No cached weather available!")
+                    mutableCurrentWeather.value = CurrentWeatherResponseState.Failed(Exception("No cached data"))
+                }
+            } catch (ex: Exception) {
+                mutableMessage.emit("Failed to load cached weather: ${ex.message}")
+                mutableCurrentWeather.value = CurrentWeatherResponseState.Failed(ex)
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    fun loadCachedWeather(context: Context) {
+        getCachedWeather(context)
+    }
+
 }

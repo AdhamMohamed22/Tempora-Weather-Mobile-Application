@@ -2,6 +2,7 @@ package com.example.tempora.data.repository
 
 import com.example.tempora.data.local.WeatherLocalDataSource
 import com.example.tempora.data.models.Alarm
+import com.example.tempora.data.models.CashedWeather
 import com.example.tempora.data.models.CurrentWeather
 import com.example.tempora.data.models.FavouriteLocation
 import com.example.tempora.data.models.ForecastWeather
@@ -16,6 +17,14 @@ class Repository(private val remoteDataSource: WeatherRemoteDataSource,private v
 
     override suspend fun getForecastWeather(lat: Double, lon: Double, appid: String, units: String?,language: String): Flow<ForecastWeather> {
         return remoteDataSource.getForecastWeather(lat,lon,appid,units,language)
+    }
+
+    override suspend fun insertCashedWeather(cashedWeather: CashedWeather) {
+        localDataSource.insertCashedWeather(cashedWeather)
+    }
+
+    override suspend fun getCashedWeather(): Flow<CashedWeather> {
+        return localDataSource.getCashedWeather()
     }
 
     override suspend fun insertFavouriteLocation(favouriteLocation: FavouriteLocation) {
