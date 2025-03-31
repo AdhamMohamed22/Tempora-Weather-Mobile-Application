@@ -1,10 +1,21 @@
 package com.example.tempora.data.local
 
 import com.example.tempora.data.models.Alarm
+import com.example.tempora.data.models.CashedWeather
+import com.example.tempora.data.models.CurrentWeather
 import com.example.tempora.data.models.FavouriteLocation
+import com.example.tempora.data.models.ForecastWeather
 import kotlinx.coroutines.flow.Flow
 
 class WeatherLocalDataSource(private val weatherDao: WeatherDao): IWeatherLocalDataSource {
+
+    override suspend fun insertCashedWeather(cashedWeather: CashedWeather) {
+        weatherDao.insertCashedWeather(cashedWeather)
+    }
+
+    override suspend fun getCashedWeather(): Flow<CashedWeather> {
+        return weatherDao.getCashedWeather()
+    }
 
     override suspend fun insertFavouriteLocation(favouriteLocation: FavouriteLocation) {
         weatherDao.insertFavouriteLocation(favouriteLocation)

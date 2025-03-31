@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -37,6 +38,8 @@ import com.example.tempora.data.repository.Repository
 import com.example.tempora.data.response_state.CurrentWeatherResponseState
 import com.example.tempora.data.response_state.ForecastWeatherResponseState
 import com.example.tempora.composables.home.components.LoadingIndicator
+import com.example.tempora.utils.ConnectivityObserver
+import com.example.tempora.utils.checkForInternet
 
 
 @RequiresApi(Build.VERSION_CODES.O)
@@ -59,23 +62,30 @@ fun HomeScreen(showFAB: MutableState<Boolean>, location: Location){
     val daysForecastWeather by viewModel.daysForecastWeather.collectAsStateWithLifecycle()
     val selectedUnit by viewModel.selectedUnit.collectAsStateWithLifecycle()
 
-    LaunchedEffect(Unit) {
+    val connectivityObserver = remember { ConnectivityObserver(context) }
+    val isConnected by connectivityObserver.isConnected.collectAsStateWithLifecycle(
+        initialValue = checkForInternet(context)
+    )
+
+    LaunchedEffect(viewModel.message) {
         viewModel.message.collect{
             Toast.makeText(context, it, Toast.LENGTH_LONG).show()
         }
     }
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(isConnected) {
         val sharedPref = SharedPref.getInstance(context)
-        if(sharedPref.getGpsSelected()){
-            viewModel.getCurrentWeather(location.latitude,location.longitude,context)
-            viewModel.getTodayForecastWeather(location.latitude,location.longitude,context)
-            viewModel.get5DaysForecastWeather(location.latitude,location.longitude,context)
-        }
-        else {
-            viewModel.getCurrentWeather(sharedPref.getLatitude(),sharedPref.getLongitude(),context)
-            viewModel.getTodayForecastWeather(sharedPref.getLatitude(),sharedPref.getLongitude(),context)
-            viewModel.get5DaysForecastWeather(sharedPref.getLatitude(),sharedPref.getLongitude(),context)
+        val lat = if (sharedPref.getGpsSelected()) location.latitude else sharedPref.getLatitude()
+        val lon = if (sharedPref.getGpsSelected()) location.longitude else sharedPref.getLongitude()
+
+        if (isConnected) {
+            // Fetch fresh data from the API
+            viewModel.getCurrentWeather(lat, lon, context)
+            viewModel.getTodayForecastWeather(lat, lon, context)
+            viewModel.get5DaysForecastWeather(lat, lon, context)
+        } else {
+            // Load cached weather data from Room DB
+            viewModel.loadCachedWeather(context)
         }
     }
 

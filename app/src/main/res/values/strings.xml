@@ -38,4 +38,8 @@
     <string name="notification">Notification</string>
     <string name="cancel">Cancel</string>
     <string name="save">Save</string>
+    <string name="network_connection_lost">Network Connection Lost!</string>
+    <string name="location_deleted_successfully">Location Deleted Successfully!</string>
+    <string name="location_restored_successfully">Location Restored Successfully!</string>
+    <string name="location_added_successfully">Location Added Successfully!</string>
 </resources>

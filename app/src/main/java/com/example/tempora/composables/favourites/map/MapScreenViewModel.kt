@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import com.example.tempora.BuildConfig
+import com.example.tempora.R
 import com.example.tempora.composables.settings.PreferencesManager
 import com.example.tempora.composables.settings.utils.SharedPref
 import com.example.tempora.composables.settings.utils.getTemperatureUnit
@@ -126,7 +127,7 @@ class MapScreenViewModel(private val placesClient: PlacesClient,private val repo
                 val forecastWeather = repository.getForecastWeather(lat,lon,BuildConfig.appidSafe,units,language).first()
                 val favouriteLocation = FavouriteLocation(latitude = lat, longitude = lon, country = address, currentWeather = currentWeather, forecastWeather = forecastWeather)
                 repository.insertFavouriteLocation(favouriteLocation)
-                mutableMessage.emit("Location Added Successfully!")
+                mutableMessage.emit(context.getString(R.string.location_added_successfully))
             } catch (ex: Exception){
                 mutableMessage.emit("Couldn't Add Location To Favourites ${ex.message}")
             }
