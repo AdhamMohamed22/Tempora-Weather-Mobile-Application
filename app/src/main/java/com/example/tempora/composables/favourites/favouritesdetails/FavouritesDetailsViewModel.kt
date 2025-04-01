@@ -133,7 +133,7 @@ class FavouritesDetailsScreenViewModel(private val repository: Repository) : Vie
                 val result = repository.getForecastWeather(lat,lon,BuildConfig.appidSafe,units,language)
                 result
                     .catch {
-                            ex -> mutable5DaysForecastWeather.value = ForecastWeatherResponseState.Failed(ex)
+                        ex -> mutable5DaysForecastWeather.value = ForecastWeatherResponseState.Failed(ex)
                         mutableMessage.emit(ex.message.toString()) }
                     .map { it -> it.list
                         .filter { item0 -> item0.dt_txt.substringBefore(" ") != todayFormattedDate } // Exclude today's forecast

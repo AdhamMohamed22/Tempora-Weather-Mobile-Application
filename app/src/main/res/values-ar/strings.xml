@@ -42,4 +42,6 @@
     <string name="location_deleted_successfully">تم حذف المكان بنجاح!</string>
     <string name="location_restored_successfully">تم استرجاع المكان المحذوف بنجاح!</string>
     <string name="location_added_successfully">تم اضافة المكان الى المفضلة!</string>
+    <string name="alarm_added_successfully">تم اضافة التذكير الى الاشعارات!</string>
+    <string name="alarm_deleted_successfully">تم حذف التذكير بنجاح!</string>
 </resources>
