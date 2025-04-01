@@ -110,7 +110,7 @@ class WeatherDaoTest {
         //When --> Get All FavouritesLocations (getAllFavouriteLocations()) & Converting The Flow<List<FavouriteLocations>> To List<FavouriteLocations>
         val favouriteLocations = dao.getAllFavouriteLocations().first()
 
-        //Then --> AssertThat The Retrieved FavouriteLocations List isNotEmpty & Contains The FavouriteLocation Inserted
+        //Then --> Asserting The Retrieved FavouriteLocations List isNotEmpty & Contains The FavouriteLocation Inserted
         assertTrue(favouriteLocations.isNotEmpty())
         assertThat(favouriteLocations, hasItem(favouriteLocation))
     }
