@@ -95,11 +95,11 @@ fun AlarmsScreen(
 
     val alarmsState by viewModel.alarm.collectAsStateWithLifecycle()
 
-    //    LaunchedEffect(Unit) {
-//        viewModel.message.collect {
-//            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
-//        }
-//    }
+        LaunchedEffect(Unit) {
+        viewModel.message.collect {
+            Toast.makeText(context, it, Toast.LENGTH_LONG).show()
+        }
+    }
 
     LaunchedEffect(Unit) {
         viewModel.getAllAlarms()
@@ -112,7 +112,7 @@ fun AlarmsScreen(
             viewModel = viewModel,
             showAlarmsBottomSheet = showAlarmsBottomSheet,
             alarmsList = (alarmsState as AlarmsResponseState.Success).alarms,
-            deleteAction = { viewModel.deleteAlarm(it) },
+            deleteAction = { viewModel.deleteAlarm(it,context) },
             snackBarHostState = snackBarHostState,
         )
     }
@@ -156,7 +156,7 @@ fun DisplayAlarmsScreen(
                 fontWeight = FontWeight.Bold
             )
         } else {
-            ListOfAlarmsCards(alarmsList, deleteAction, viewModel)
+            ListOfAlarmsCards(alarmsList, deleteAction, viewModel,context)
         }
     }
 
@@ -231,7 +231,7 @@ fun DisplayAlarmsScreen(
                                     selectedDate = selectedDate.toFormattedString("yyyy-MM-dd"),
                                     selectedTime = selectedTime.toFormattedString("hh:mm a")
                                 )
-                                viewModel.insertAlarm(alarm)
+                                viewModel.insertAlarm(alarm,context)
                                 scheduleNotification(context, delayInMillis)
                                 showAlarmsBottomSheet.value = false
                             } else {
@@ -287,14 +287,15 @@ fun AlarmOptionItem(
 fun AlarmCard(
     alarm: Alarm,
     deleteAction: (Alarm) -> Unit,
-    viewModel: AlarmsScreenViewModel
+    viewModel: AlarmsScreenViewModel,
+    context: Context
 ) {
     val alarmInsertedTime = alarm.selectedTime
     val timeNow = System.currentTimeMillis()
 
     val now = millisToTime(timeNow)
     if (now > alarmInsertedTime) {
-        viewModel.deleteAlarm(alarm)
+        viewModel.deleteAlarm(alarm,context)
     }
 
     Card(
@@ -334,7 +335,8 @@ fun AlarmCard(
 fun ListOfAlarmsCards(
     alarmsList: List<Alarm>,
     deleteAction: (Alarm) -> Unit,
-    viewModel: AlarmsScreenViewModel
+    viewModel: AlarmsScreenViewModel,
+    context: Context
 ){
     Box(modifier = Modifier.fillMaxSize())
     {
@@ -350,7 +352,7 @@ fun ListOfAlarmsCards(
         {
             items(alarmsList.size)
             {
-                AlarmCard(alarmsList[it],deleteAction,viewModel)
+                AlarmCard(alarmsList[it],deleteAction,viewModel,context)
             }
         }
     }

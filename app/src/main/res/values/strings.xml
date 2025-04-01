@@ -42,4 +42,6 @@
     <string name="location_deleted_successfully">Location Deleted Successfully!</string>
     <string name="location_restored_successfully">Location Restored Successfully!</string>
     <string name="location_added_successfully">Location Added Successfully!</string>
+    <string name="alarm_added_successfully">Alarm Added Successfully!</string>
+    <string name="alarm_deleted_successfully">Alarm Deleted Successfully!</string>
 </resources>

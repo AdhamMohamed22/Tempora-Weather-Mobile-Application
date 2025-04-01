@@ -1,9 +1,11 @@
 package com.example.tempora.composables.alarms
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.tempora.R
 import com.example.tempora.data.models.Alarm
 import com.example.tempora.data.models.FavouriteLocation
 import com.example.tempora.data.repository.Repository
@@ -32,10 +34,11 @@ class AlarmsScreenViewModel(private val repository: Repository): ViewModel() {
     private val mutableMessage = MutableSharedFlow<String>()
     val message = mutableMessage.asSharedFlow()
 
-    fun insertAlarm(alarm: Alarm){
+    fun insertAlarm(alarm: Alarm,context: Context){
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 repository.insertAlarm(alarm)
+                mutableMessage.emit(context.getString(R.string.alarm_added_successfully))
             } catch (ex: Exception){
                 mutableMessage.emit("An Error Occurred!, ${ex.message}")
             }
@@ -59,11 +62,11 @@ class AlarmsScreenViewModel(private val repository: Repository): ViewModel() {
         }
     }
 
-    fun deleteAlarm(alarm: Alarm){
+    fun deleteAlarm(alarm: Alarm,context: Context){
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 repository.deleteAlarm(alarm)
-                mutableMessage.emit("Alarm Deleted Successfully!")
+                mutableMessage.emit(context.getString(R.string.alarm_deleted_successfully))
             } catch (ex: Exception){
                 mutableMessage.emit("Couldn't Delete Alarm From Alarms Screen ${ex.message}")
             }
