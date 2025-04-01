@@ -43,6 +43,7 @@ class AlarmsScreenViewModelTest {
 
         //Given
         val alarm = Alarm(selectedDate = "2025-04-01", selectedTime = "08:30 AM")
+        //Mocking
         coEvery { repository.insertAlarm(alarm) } returns Unit
 
         //When
@@ -62,6 +63,7 @@ class AlarmsScreenViewModelTest {
 
         //Given
         val alarm = Alarm(selectedDate = "2025-04-01", selectedTime = "08:30 AM")
+        //Mocking
         coEvery { repository.deleteAlarm(alarm) } returns Unit
 
         //When
@@ -84,6 +86,7 @@ class AlarmsScreenViewModelTest {
             Alarm(selectedDate = "2025-04-01", selectedTime = "08:30 AM"),
             Alarm(selectedDate = "2025-04-02", selectedTime = "09:30 AM")
         )
+        //Mocking
         coEvery { repository.getAllAlarms() } returns flowOf(alarmList)
 
         //When

@@ -122,6 +122,22 @@ class WeatherLocalDataSourceTest {
     }
 
     @Test
+    fun insertAndRetrieveAlarm() = runTest {
+        //Given --> Create Alarm Object & Insert it (localDataSource.insertAlarm(alarm))
+        val alarm = Alarm(selectedDate = "2025-04-01", selectedTime = "08:30 AM")
+        localDataSource.insertAlarm(alarm)
+
+        //When --> Get All Alarms (localDataSource.getAllAlarms().first()) & Converting The Flow<List<Alarm>> To List<Alarm> Then To Alarm
+        val alarms = localDataSource.getAllAlarms().first()
+        val retrievedAlarm = alarms.first()
+
+        //Then --> Asserting The List "alarms" isNotEmpty & Comparing The Expected Values With The Actually Inserted Ones Without id (as it is auto-generated) "retrievedAlarm"
+        assertTrue(alarms.isNotEmpty())
+        assertEquals("2025-04-01", retrievedAlarm.selectedDate)
+        assertEquals("08:30 AM", retrievedAlarm.selectedTime)
+    }
+
+    @Test
     fun insertAndDeleteAlarm() = runTest {
        //Given --> Create Alarm Object & Insert it Using LocalDataSource (localDataSource.insertAlarm(alarm))
        val alarm = Alarm(selectedDate = "2025-04-01", selectedTime = "08:30 AM")
