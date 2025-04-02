@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -27,9 +25,9 @@ import androidx.compose.ui.unit.sp
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.tempora.R
+import com.example.tempora.utils.helpers.formatNumberBasedOnLanguage
+import com.example.tempora.utils.helpers.formatTemperatureUnitBasedOnLanguage
 import com.example.tempora.data.models.Item0
-import com.example.tempora.composables.settings.utils.formatNumberBasedOnLanguage
-import com.example.tempora.composables.settings.utils.formatTemperatureUnitBasedOnLanguage
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -40,7 +38,8 @@ import java.util.Locale
 fun WeekDayCard(dayForecast: Item0, selectedUnit: String) {
 
     val inputFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
-    val outputFormatter = DateTimeFormatter.ofPattern("EEEE", Locale.getDefault()) // "EEEE" gives full weekday name
+    val outputFormatter =
+        DateTimeFormatter.ofPattern("EEEE", Locale.getDefault()) // "EEEE" gives full weekday name
     val dateTime = LocalDateTime.parse(dayForecast.dt_txt, inputFormatter)
     val weekDay = dateTime.format(outputFormatter)
 
@@ -50,7 +49,8 @@ fun WeekDayCard(dayForecast: Item0, selectedUnit: String) {
             .padding(horizontal = 18.dp, vertical = 5.dp),
         shape = RoundedCornerShape(10.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(containerColor = colorResource(R.color.secondaryColor).copy(alpha = 0.75f),
+        colors = CardDefaults.cardColors(
+            containerColor = colorResource(R.color.secondaryColor).copy(alpha = 0.75f),
         )
     ) {
         Row(
@@ -63,7 +63,8 @@ fun WeekDayCard(dayForecast: Item0, selectedUnit: String) {
             Text(text = weekDay, fontWeight = FontWeight.Medium, fontSize = 16.sp)
 
             GlideImage(
-                model = "https://openweathermap.org/img/wn/${dayForecast.weather[0].icon}@2x.png", contentDescription = "",
+                model = "https://openweathermap.org/img/wn/${dayForecast.weather[0].icon}@2x.png",
+                contentDescription = "",
                 modifier = Modifier.size(75.dp)
             )
 
@@ -71,23 +72,33 @@ fun WeekDayCard(dayForecast: Item0, selectedUnit: String) {
                 verticalArrangement = Arrangement.SpaceEvenly,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                Text(text = stringResource(R.string.temp, formatNumberBasedOnLanguage(dayForecast.main.temp.toString()), formatTemperatureUnitBasedOnLanguage(selectedUnit)), fontWeight = FontWeight.Medium, fontSize = 15.sp)
+                Text(
+                    text = stringResource(
+                        R.string.temp,
+                        formatNumberBasedOnLanguage(dayForecast.main.temp.toString()),
+                        formatTemperatureUnitBasedOnLanguage(selectedUnit)
+                    ), fontWeight = FontWeight.Medium, fontSize = 15.sp
+                )
 
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly,
                     verticalAlignment = Alignment.CenterVertically
-                ){
-                    Text(text = stringResource(
-                        R.string.min,
-                        formatNumberBasedOnLanguage(dayForecast.main.temp_min.toString()),
-                        formatTemperatureUnitBasedOnLanguage(selectedUnit)
-                    ), fontWeight = FontWeight.Normal, fontSize = 14.sp)
+                ) {
+                    Text(
+                        text = stringResource(
+                            R.string.min,
+                            formatNumberBasedOnLanguage(dayForecast.main.temp_min.toString()),
+                            formatTemperatureUnitBasedOnLanguage(selectedUnit)
+                        ), fontWeight = FontWeight.Normal, fontSize = 14.sp
+                    )
                     Spacer(Modifier.width(5.dp))
-                    Text(text = stringResource(
-                        R.string.max,
-                        formatNumberBasedOnLanguage(dayForecast.main.temp_max.toString()),
-                        formatTemperatureUnitBasedOnLanguage(selectedUnit)
-                    ), fontWeight = FontWeight.Normal, fontSize = 14.sp)
+                    Text(
+                        text = stringResource(
+                            R.string.max,
+                            formatNumberBasedOnLanguage(dayForecast.main.temp_max.toString()),
+                            formatTemperatureUnitBasedOnLanguage(selectedUnit)
+                        ), fontWeight = FontWeight.Normal, fontSize = 14.sp
+                    )
                 }
             }
         }

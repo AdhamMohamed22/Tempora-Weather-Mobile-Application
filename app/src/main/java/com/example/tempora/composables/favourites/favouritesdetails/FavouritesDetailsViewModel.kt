@@ -2,7 +2,6 @@ package com.example.tempora.composables.favourites.favouritesdetails
 
 import android.content.Context
 import android.os.Build
-import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
@@ -10,9 +9,10 @@ import androidx.lifecycle.viewModelScope
 import com.example.tempora.BuildConfig
 import com.example.tempora.composables.settings.PreferencesManager
 import com.example.tempora.data.repository.Repository
-import com.example.tempora.data.response_state.CurrentWeatherResponseState
-import com.example.tempora.data.response_state.ForecastWeatherResponseState
-import com.example.tempora.utils.getTemperatureSymbol
+import com.example.tempora.data.responsestate.CurrentWeatherResponseState
+import com.example.tempora.data.responsestate.ForecastWeatherResponseState
+import com.example.tempora.utils.helpers.getTemperatureSymbol
+import com.example.tempora.utils.helpers.getTemperatureUnit
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,16 +50,12 @@ class FavouritesDetailsScreenViewModel(private val repository: Repository) : Vie
     private val mutableSelectedUnit = MutableStateFlow("°K")
     val selectedUnit = mutableSelectedUnit.asStateFlow()
 
-//    init {
-//        getCurrentWeather()
-//        getForecastWeather()
-//    }
 
     fun getCurrentWeather(lat: Double,lon: Double,context: Context){
         viewModelScope.launch(Dispatchers.IO){
             val selectedUnit = PreferencesManager.getInstance(context).getPreference(
                 PreferencesManager.TEMPERATURE_UNIT_KEY,"Kelvin °K").first()
-            val units = com.example.tempora.utils.getTemperatureUnit(selectedUnit)
+            val units = getTemperatureUnit(selectedUnit)
 
             val selectedLanguage = PreferencesManager.getInstance(context).getPreference(
                 PreferencesManager.LANGUAGE_KEY, "English").first()
@@ -76,7 +72,6 @@ class FavouritesDetailsScreenViewModel(private val repository: Repository) : Vie
                         mutableMessage.emit(ex.message.toString()) }
                     .collect{
                         mutableCurrentWeather.value = CurrentWeatherResponseState.Success(it)
-                        Log.i("TAG", "getCurrentWeather: $it")
                     }
             } catch (ex: Exception){
                 mutableMessage.emit("An Error Occurred!, ${ex.message}")
@@ -89,7 +84,7 @@ class FavouritesDetailsScreenViewModel(private val repository: Repository) : Vie
         viewModelScope.launch(Dispatchers.IO) {
             val selectedUnit = PreferencesManager.getInstance(context).getPreference(
                 PreferencesManager.TEMPERATURE_UNIT_KEY,"Kelvin °K").first()
-            val units = com.example.tempora.utils.getTemperatureUnit(selectedUnit)
+            val units = getTemperatureUnit(selectedUnit)
 
             val selectedLanguage = PreferencesManager.getInstance(context).getPreference(
                 PreferencesManager.LANGUAGE_KEY, "English").first()
@@ -104,12 +99,9 @@ class FavouritesDetailsScreenViewModel(private val repository: Repository) : Vie
                     .map { it -> it.list.take(8)}
                     .collect {
                         mutableTodayForecastWeather.value = ForecastWeatherResponseState.Success(it)
-                        Log.i("TAG", "getForecastWeather: ${it.size}")
                     }
             } catch (ex: Exception){
-                //mutableMessage.emit("An Error Occurred!, ${ex.message}")
                 mutableTodayForecastWeather.value = ForecastWeatherResponseState.Failed(ex)
-                Log.i("TAG", "getForecastWeather: ${ex.message}")
             }
         }
     }
@@ -123,7 +115,7 @@ class FavouritesDetailsScreenViewModel(private val repository: Repository) : Vie
         viewModelScope.launch(Dispatchers.IO) {
             val selectedUnit = PreferencesManager.getInstance(context).getPreference(
                 PreferencesManager.TEMPERATURE_UNIT_KEY,"Kelvin °K").first()
-            val units = com.example.tempora.utils.getTemperatureUnit(selectedUnit)
+            val units = getTemperatureUnit(selectedUnit)
 
             val selectedLanguage = PreferencesManager.getInstance(context).getPreference(
                 PreferencesManager.LANGUAGE_KEY, "English").first()
@@ -142,12 +134,9 @@ class FavouritesDetailsScreenViewModel(private val repository: Repository) : Vie
                     }
                     .collect {
                         mutable5DaysForecastWeather.value = ForecastWeatherResponseState.Success(it)
-                        Log.i("TAG", "getForecastWeather: ${it.size}")
                     }
             } catch (ex: Exception){
-                //mutableMessage.emit("An Error Occurred!, ${ex.message}")
                 mutable5DaysForecastWeather.value = ForecastWeatherResponseState.Failed(ex)
-                Log.i("TAG", "getForecastWeather: ${ex.message}")
             }
         }
     }

@@ -80,7 +80,7 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //Notification
+        //-------------Notification-----------//
         createNotificationChannel(this)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             requestPermissions(arrayOf(android.Manifest.permission.POST_NOTIFICATIONS), 101)
@@ -90,11 +90,11 @@ class MainActivity : ComponentActivity() {
         if (notificationId != -1) {
             val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notificationManager.cancel(notificationId) // Cancel the notification
-
             // Stop the alarm sound
             stopNotificationSound()
         }
 
+        //-------------Localization-----------//
         val preferencesManager = PreferencesManager.getInstance(this)
         // Use runBlocking to get the saved language synchronously
         val savedLanguage = runBlocking {
@@ -104,6 +104,7 @@ class MainActivity : ComponentActivity() {
         LocalizationHelper.setLocale(this, languageCode)
 
         setContent {
+
             locationState = remember { mutableStateOf(Location(LocationManager.GPS_PROVIDER)) }
 
             var displaySplashScreen by remember { mutableStateOf(true) }
@@ -112,7 +113,6 @@ class MainActivity : ComponentActivity() {
             } else {
                 MainScreen(locationState.value)
             }
-
 
             // Notification
             val navController = rememberNavController()
@@ -125,11 +125,8 @@ class MainActivity : ComponentActivity() {
                 }
             }
 
-//            val serviceIntent = Intent(this, NotificationService::class.java)
-//            startService(serviceIntent)
         }
     }
-
 
     override fun onStart() {
         super.onStart()
@@ -192,7 +189,6 @@ class MainActivity : ComponentActivity() {
             }, Looper.myLooper()
         )
     }
-
 
     private fun enableLocationServices() {
         Toast.makeText(this, "Turn on Location", Toast.LENGTH_LONG).show()

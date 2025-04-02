@@ -1,16 +1,22 @@
 package com.example.tempora.composables.splashscreen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import com.airbnb.lottie.compose.*
-import com.example.tempora.R // Replace with your actual package name
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.animateLottieCompositionAsState
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.example.tempora.R
 
 @Composable
-fun SplashScreen(onComplete: ()-> Unit) {
+fun SplashScreen(onComplete: () -> Unit) {
     // Load the Lottie animation
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.tempora_splash))
 
@@ -23,7 +29,9 @@ fun SplashScreen(onComplete: ()-> Unit) {
 
     // Display the animation
     Box(
-        modifier = Modifier.fillMaxSize().background(Color.White),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(Color.White),
         contentAlignment = Alignment.Center
     ) {
         LottieAnimation(

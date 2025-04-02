@@ -5,15 +5,11 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
-import android.media.AudioAttributes
 import android.media.MediaPlayer
-import android.net.Uri
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
-import androidx.core.net.toUri
 import com.example.tempora.MainActivity
 import com.example.tempora.R
-import com.example.tempora.composables.alarms.notification.broadcastreciever.NotificationReceiver
 import com.example.tempora.composables.alarms.notification.sound.StopSoundReceiver
 import com.example.tempora.data.models.CurrentWeather
 
@@ -24,7 +20,10 @@ fun showNotification(context: Context, result: CurrentWeather) {
     // Intent to stop sound and remove notification
     val stopSoundIntent = Intent(context, StopSoundReceiver::class.java)
     val stopSoundPendingIntent = PendingIntent.getBroadcast(
-        context, 0, stopSoundIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+        context,
+        0,
+        stopSoundIntent,
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
     )
 
     // Intent to open MainActivity (with stop sound logic)
@@ -46,7 +45,11 @@ fun showNotification(context: Context, result: CurrentWeather) {
         .setContentText("Location's Description: ${result.weather[0].description}")
         .setPriority(NotificationCompat.PRIORITY_HIGH)
         .addAction(R.drawable.tempora, "Open", openPendingIntent) // Open MainActivity
-        .addAction(R.drawable.tempora, "Cancel", stopSoundPendingIntent) // Stop Sound & Remove Notification
+        .addAction(
+            R.drawable.tempora,
+            "Cancel",
+            stopSoundPendingIntent
+        ) // Stop Sound & Remove Notification
         .setAutoCancel(true) // Remove notification when clicked
         .build()
 

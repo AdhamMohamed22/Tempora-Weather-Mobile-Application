@@ -1,9 +1,14 @@
 package com.example.tempora.composables.alarms
 
+import android.app.DatePickerDialog
+import android.app.TimePickerDialog
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -13,6 +18,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -25,9 +32,11 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,28 +45,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.dp
-import com.example.tempora.R
-
-import android.app.DatePickerDialog
-import android.app.TimePickerDialog
-import android.content.Context
-import android.widget.Toast
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.SnackbarHostState
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.tempora.R
 import com.example.tempora.composables.alarms.notification.workmanager.scheduleNotification
 import com.example.tempora.composables.home.components.LoadingIndicator
 import com.example.tempora.data.local.WeatherDatabase
@@ -66,7 +65,7 @@ import com.example.tempora.data.models.Alarm
 import com.example.tempora.data.remote.RetrofitHelper
 import com.example.tempora.data.remote.WeatherRemoteDataSource
 import com.example.tempora.data.repository.Repository
-import com.example.tempora.data.response_state.AlarmsResponseState
+import com.example.tempora.data.responsestate.AlarmsResponseState
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -95,7 +94,7 @@ fun AlarmsScreen(
 
     val alarmsState by viewModel.alarm.collectAsStateWithLifecycle()
 
-        LaunchedEffect(Unit) {
+    LaunchedEffect(Unit) {
         viewModel.message.collect {
             Toast.makeText(context, it, Toast.LENGTH_LONG).show()
         }
@@ -112,7 +111,7 @@ fun AlarmsScreen(
             viewModel = viewModel,
             showAlarmsBottomSheet = showAlarmsBottomSheet,
             alarmsList = (alarmsState as AlarmsResponseState.Success).alarms,
-            deleteAction = { viewModel.deleteAlarm(it,context) },
+            deleteAction = { viewModel.deleteAlarm(it, context) },
             snackBarHostState = snackBarHostState,
         )
     }
@@ -156,7 +155,7 @@ fun DisplayAlarmsScreen(
                 fontWeight = FontWeight.Bold
             )
         } else {
-            ListOfAlarmsCards(alarmsList, deleteAction, viewModel,context)
+            ListOfAlarmsCards(alarmsList, deleteAction, viewModel, context)
         }
     }
 
@@ -231,7 +230,7 @@ fun DisplayAlarmsScreen(
                                     selectedDate = selectedDate.toFormattedString("yyyy-MM-dd"),
                                     selectedTime = selectedTime.toFormattedString("hh:mm a")
                                 )
-                                viewModel.insertAlarm(alarm,context)
+                                viewModel.insertAlarm(alarm, context)
                                 scheduleNotification(context, delayInMillis)
                                 showAlarmsBottomSheet.value = false
                             } else {
@@ -295,7 +294,7 @@ fun AlarmCard(
 
     val now = millisToTime(timeNow)
     if (now > alarmInsertedTime) {
-        viewModel.deleteAlarm(alarm,context)
+        viewModel.deleteAlarm(alarm, context)
     }
 
     Card(
@@ -337,7 +336,7 @@ fun ListOfAlarmsCards(
     deleteAction: (Alarm) -> Unit,
     viewModel: AlarmsScreenViewModel,
     context: Context
-){
+) {
     Box(modifier = Modifier.fillMaxSize())
     {
         Image(
@@ -348,16 +347,17 @@ fun ListOfAlarmsCards(
                 .fillMaxSize()
                 .graphicsLayer(alpha = 0.8f)
         )
-        LazyColumn(modifier = Modifier.wrapContentSize(Alignment.Center).padding(vertical = 32.dp))
+        LazyColumn(modifier = Modifier
+            .wrapContentSize(Alignment.Center)
+            .padding(vertical = 32.dp))
         {
             items(alarmsList.size)
             {
-                AlarmCard(alarmsList[it],deleteAction,viewModel,context)
+                AlarmCard(alarmsList[it], deleteAction, viewModel, context)
             }
         }
     }
 }
-
 
 
 fun showDatePicker(context: Context, onDateSelected: (Calendar) -> Unit) {

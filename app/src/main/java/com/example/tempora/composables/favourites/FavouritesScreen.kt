@@ -48,9 +48,9 @@ import com.example.tempora.data.models.FavouriteLocation
 import com.example.tempora.data.remote.RetrofitHelper
 import com.example.tempora.data.remote.WeatherRemoteDataSource
 import com.example.tempora.data.repository.Repository
-import com.example.tempora.data.response_state.FavouriteLocationsResponseState
+import com.example.tempora.data.responsestate.FavouriteLocationsResponseState
 import com.example.tempora.composables.home.components.LoadingIndicator
-import com.example.tempora.composables.settings.utils.formatNumberBasedOnLanguage
+import com.example.tempora.utils.helpers.formatNumberBasedOnLanguage
 
 
 @Composable

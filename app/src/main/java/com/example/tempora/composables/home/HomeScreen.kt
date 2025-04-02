@@ -26,25 +26,24 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tempora.R
 import com.example.tempora.composables.home.components.DisplayCurrentWeather
-import com.example.tempora.composables.home.components.NetworkCutOffAnimation
 import com.example.tempora.composables.home.components.ListOf5WeekDaysCards
 import com.example.tempora.composables.home.components.ListOfHourCards
+import com.example.tempora.composables.home.components.LoadingIndicator
 import com.example.tempora.composables.settings.utils.SharedPref
 import com.example.tempora.data.local.WeatherDatabase
 import com.example.tempora.data.local.WeatherLocalDataSource
 import com.example.tempora.data.remote.RetrofitHelper
 import com.example.tempora.data.remote.WeatherRemoteDataSource
 import com.example.tempora.data.repository.Repository
-import com.example.tempora.data.response_state.CurrentWeatherResponseState
-import com.example.tempora.data.response_state.ForecastWeatherResponseState
-import com.example.tempora.composables.home.components.LoadingIndicator
-import com.example.tempora.utils.ConnectivityObserver
-import com.example.tempora.utils.checkForInternet
+import com.example.tempora.data.responsestate.CurrentWeatherResponseState
+import com.example.tempora.data.responsestate.ForecastWeatherResponseState
+import com.example.tempora.utils.helpers.ConnectivityObserver
+import com.example.tempora.utils.helpers.checkForInternet
 
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun HomeScreen(showFAB: MutableState<Boolean>, location: Location){
+fun HomeScreen(showFAB: MutableState<Boolean>, location: Location) {
 
     showFAB.value = false
     val context = LocalContext.current
@@ -68,7 +67,7 @@ fun HomeScreen(showFAB: MutableState<Boolean>, location: Location){
     )
 
     LaunchedEffect(viewModel.message) {
-        viewModel.message.collect{
+        viewModel.message.collect {
             Toast.makeText(context, it, Toast.LENGTH_LONG).show()
         }
     }
@@ -89,58 +88,59 @@ fun HomeScreen(showFAB: MutableState<Boolean>, location: Location){
         }
     }
 
-    val isLoading = currentWeatherState is CurrentWeatherResponseState.Loading || todayForecastWeatherState is ForecastWeatherResponseState.Loading || daysForecastWeather is ForecastWeatherResponseState.Loading
+    val isLoading =
+        currentWeatherState is CurrentWeatherResponseState.Loading || todayForecastWeatherState is ForecastWeatherResponseState.Loading || daysForecastWeather is ForecastWeatherResponseState.Loading
 
     Box(modifier = Modifier.fillMaxSize()) {
-            // Background Image
-            Image(
-                painter = painterResource(id = R.drawable.background),
-                contentDescription = "HomeScreen Background",
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .graphicsLayer(alpha = 0.8f)
-            )
+        // Background Image
+        Image(
+            painter = painterResource(id = R.drawable.background),
+            contentDescription = "HomeScreen Background",
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .fillMaxSize()
+                .graphicsLayer(alpha = 0.8f)
+        )
 
-            // Foreground UI elements
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState()),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                if(isLoading){
-                    LoadingIndicator()
-                } else{
-                    when (currentWeatherState) {
-                        is CurrentWeatherResponseState.Loading -> {}
-                        is CurrentWeatherResponseState.Failed -> Text("")
-                        is CurrentWeatherResponseState.Success -> DisplayCurrentWeather(
-                            currentWeather = (currentWeatherState as CurrentWeatherResponseState.Success).currentWeather,
-                            selectedUnit
-                        )
-                    }
+        // Foreground UI elements
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState()),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            if (isLoading) {
+                LoadingIndicator()
+            } else {
+                when (currentWeatherState) {
+                    is CurrentWeatherResponseState.Loading -> {}
+                    is CurrentWeatherResponseState.Failed -> Text("")
+                    is CurrentWeatherResponseState.Success -> DisplayCurrentWeather(
+                        currentWeather = (currentWeatherState as CurrentWeatherResponseState.Success).currentWeather,
+                        selectedUnit
+                    )
+                }
 
-                    when (todayForecastWeatherState) {
-                        is ForecastWeatherResponseState.Loading -> {}
-                        is ForecastWeatherResponseState.Failed -> Text("")
-                        is ForecastWeatherResponseState.Success -> ListOfHourCards(
-                            todayForecast = (todayForecastWeatherState as ForecastWeatherResponseState.Success).forecastWeather,
-                            selectedUnit
-                        )
-                    }
+                when (todayForecastWeatherState) {
+                    is ForecastWeatherResponseState.Loading -> {}
+                    is ForecastWeatherResponseState.Failed -> Text("")
+                    is ForecastWeatherResponseState.Success -> ListOfHourCards(
+                        todayForecast = (todayForecastWeatherState as ForecastWeatherResponseState.Success).forecastWeather,
+                        selectedUnit
+                    )
+                }
 
-                    when (daysForecastWeather) {
-                        is ForecastWeatherResponseState.Loading -> {}
-                        is ForecastWeatherResponseState.Failed -> Text("")
-                        is ForecastWeatherResponseState.Success -> ListOf5WeekDaysCards(
-                            fiveDaysList = (daysForecastWeather as ForecastWeatherResponseState.Success).forecastWeather,
-                            selectedUnit
-                        )
-                    }
+                when (daysForecastWeather) {
+                    is ForecastWeatherResponseState.Loading -> {}
+                    is ForecastWeatherResponseState.Failed -> Text("")
+                    is ForecastWeatherResponseState.Success -> ListOf5WeekDaysCards(
+                        fiveDaysList = (daysForecastWeather as ForecastWeatherResponseState.Success).forecastWeather,
+                        selectedUnit
+                    )
                 }
             }
         }
+    }
 }
 
 

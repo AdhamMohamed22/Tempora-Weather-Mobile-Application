@@ -5,16 +5,18 @@ import com.example.tempora.utils.converter.FavouriteLocationSerializer
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class ScreenRoutes(val route: String){
+sealed class ScreenRoutes(val route: String) {
     @Serializable
-    object Home: ScreenRoutes(route = "HomeScreen")
-    @Serializable
-    object Favourites: ScreenRoutes(route = "FavouritesScreen")
+    object Home : ScreenRoutes(route = "HomeScreen")
 
     @Serializable
-    object Alarms: ScreenRoutes(route = "AlarmsScreen")
+    object Favourites : ScreenRoutes(route = "FavouritesScreen")
+
     @Serializable
-    object Settings: ScreenRoutes(route = "SettingsScreen")
+    object Alarms : ScreenRoutes(route = "AlarmsScreen")
+
+    @Serializable
+    object Settings : ScreenRoutes(route = "SettingsScreen")
 
 
     @Serializable
@@ -24,5 +26,6 @@ sealed class ScreenRoutes(val route: String){
     ) : ScreenRoutes(route = "FavouritesDetailsScreen/{favouriteLocation}")
 
     @Serializable
-    data class Map(val isFavouritesScreen: Boolean): ScreenRoutes(route = "MapScreen/{isFavouritesScreen}")
+    data class Map(val isFavouritesScreen: Boolean) :
+        ScreenRoutes(route = "MapScreen/{isFavouritesScreen}")
 }

@@ -9,7 +9,7 @@ import com.example.tempora.data.models.ForecastWeather
 import com.example.tempora.data.remote.WeatherRemoteDataSource
 import kotlinx.coroutines.flow.Flow
 
-class Repository(private val remoteDataSource: WeatherRemoteDataSource,private val localDataSource: WeatherLocalDataSource) : IRepository{
+class Repository private constructor(private val remoteDataSource: WeatherRemoteDataSource,private val localDataSource: WeatherLocalDataSource) : IRepository{
 
     override suspend fun getCurrentWeather(lat: Double, lon: Double, appid: String, units: String?,language: String): Flow<CurrentWeather> {
         return remoteDataSource.getCurrentWeather(lat,lon,appid,units,language)

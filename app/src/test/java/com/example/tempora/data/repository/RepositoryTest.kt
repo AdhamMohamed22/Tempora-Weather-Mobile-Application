@@ -22,7 +22,7 @@ class RepositoryTest {
 
      @Before
      fun setUp() {
-      repository = Repository(remoteDataSource, localDataSource)
+      repository = Repository.getInstance(remoteDataSource, localDataSource)
      }
 
      @Test

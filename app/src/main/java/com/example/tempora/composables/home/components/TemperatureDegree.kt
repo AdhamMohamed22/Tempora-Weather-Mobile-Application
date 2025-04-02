@@ -8,12 +8,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 import com.example.tempora.R
-import com.example.tempora.composables.settings.utils.formatNumberBasedOnLanguage
-import com.example.tempora.composables.settings.utils.formatTemperatureUnitBasedOnLanguage
+import com.example.tempora.utils.helpers.formatNumberBasedOnLanguage
+import com.example.tempora.utils.helpers.formatTemperatureUnitBasedOnLanguage
 
 
 @Composable
-fun TemperatureDegree(degree: String,unit: String) {
+fun TemperatureDegree(degree: String, unit: String) {
     Text(
         text = formatNumberBasedOnLanguage("$degree ${formatTemperatureUnitBasedOnLanguage(unit)}"),
         letterSpacing = 0.sp,

@@ -14,7 +14,7 @@ import com.example.tempora.R
 @Composable
 fun WeatherStatusIcon(weatherIconCode: String) {
     val image = when (weatherIconCode) {
-        "01d", "01n"-> R.drawable.clearsky // Clear sky
+        "01d", "01n" -> R.drawable.clearsky // Clear sky
         "02d", "02n" -> R.drawable.fewclouds // Few clouds
         "03d", "03n" -> R.drawable.scatteredclouds // Scattered clouds
         "04d", "04n" -> R.drawable.brokenclouds // Broken clouds

@@ -17,16 +17,27 @@ import com.example.tempora.data.models.CurrentWeather
 
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
-fun DisplayCurrentWeather(currentWeather: CurrentWeather, selectedUnit: String){
+fun DisplayCurrentWeather(currentWeather: CurrentWeather, selectedUnit: String) {
     Spacer(modifier = Modifier.height(24.dp))
     Logo()
     WeatherStatusIcon(currentWeather.weather[0].icon)
-    TemperatureDegree(currentWeather.main.temp.toString(),selectedUnit)
+    TemperatureDegree(currentWeather.main.temp.toString(), selectedUnit)
     WeatherDescription(currentWeather.weather[0].description)
     Spacer(modifier = Modifier.height(8.dp))
-    City(currentWeather.name,currentWeather.sys.country)
+    City(currentWeather.name, currentWeather.sys.country)
     Spacer(modifier = Modifier.height(24.dp))
-    WeatherDetails(currentWeather.clouds.all, currentWeather.main.humidity, currentWeather.wind.speed.toString(), currentWeather.main.pressure.toString(), currentWeather.dt.toLong())
+    WeatherDetails(
+        currentWeather.clouds.all,
+        currentWeather.main.humidity,
+        currentWeather.wind.speed.toString(),
+        currentWeather.main.pressure.toString(),
+        currentWeather.dt.toLong()
+    )
     Spacer(modifier = Modifier.height(8.dp))
-    Text(text = stringResource(R.string.today_s_hourly_temperature), style = MaterialTheme.typography.titleMedium, color = colorResource(R.color.white), fontWeight = FontWeight.Bold)
+    Text(
+        text = stringResource(R.string.today_s_hourly_temperature),
+        style = MaterialTheme.typography.titleMedium,
+        color = colorResource(R.color.white),
+        fontWeight = FontWeight.Bold
+    )
 }

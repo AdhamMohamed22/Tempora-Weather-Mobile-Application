@@ -9,8 +9,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
@@ -24,16 +22,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.tempora.R
 import com.example.tempora.composables.home.components.DisplayCurrentWeather
 import com.example.tempora.composables.home.components.ListOf5WeekDaysCards
 import com.example.tempora.composables.home.components.ListOfHourCards
+import com.example.tempora.composables.home.components.LoadingIndicator
 import com.example.tempora.data.local.WeatherDatabase
 import com.example.tempora.data.local.WeatherLocalDataSource
 import com.example.tempora.data.models.FavouriteLocation
@@ -41,9 +37,8 @@ import com.example.tempora.data.models.Item0
 import com.example.tempora.data.remote.RetrofitHelper
 import com.example.tempora.data.remote.WeatherRemoteDataSource
 import com.example.tempora.data.repository.Repository
-import com.example.tempora.data.response_state.CurrentWeatherResponseState
-import com.example.tempora.data.response_state.ForecastWeatherResponseState
-import com.example.tempora.composables.home.components.LoadingIndicator
+import com.example.tempora.data.responsestate.CurrentWeatherResponseState
+import com.example.tempora.data.responsestate.ForecastWeatherResponseState
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.ZoneId
@@ -72,18 +67,31 @@ fun FavouritesDetailsScreen(showFAB: MutableState<Boolean>, favouriteLocation: F
     val selectedUnit by viewModel.selectedUnit.collectAsStateWithLifecycle()
 
     LaunchedEffect(Unit) {
-        viewModel.message.collect{
+        viewModel.message.collect {
             Toast.makeText(context, it, Toast.LENGTH_LONG).show()
         }
     }
 
     LaunchedEffect(Unit) {
-        viewModel.getCurrentWeather(favouriteLocation.latitude,favouriteLocation.longitude,context)
-        viewModel.getTodayForecastWeather(favouriteLocation.latitude,favouriteLocation.longitude,context)
-        viewModel.get5DaysForecastWeather(favouriteLocation.latitude,favouriteLocation.longitude,context)
+        viewModel.getCurrentWeather(
+            favouriteLocation.latitude,
+            favouriteLocation.longitude,
+            context
+        )
+        viewModel.getTodayForecastWeather(
+            favouriteLocation.latitude,
+            favouriteLocation.longitude,
+            context
+        )
+        viewModel.get5DaysForecastWeather(
+            favouriteLocation.latitude,
+            favouriteLocation.longitude,
+            context
+        )
     }
 
-    val isLoading = currentWeatherState is CurrentWeatherResponseState.Loading || todayForecastWeatherState is ForecastWeatherResponseState.Loading || daysForecastWeather is ForecastWeatherResponseState.Loading
+    val isLoading =
+        currentWeatherState is CurrentWeatherResponseState.Loading || todayForecastWeatherState is ForecastWeatherResponseState.Loading || daysForecastWeather is ForecastWeatherResponseState.Loading
 
     Box(modifier = Modifier.fillMaxSize())
     {
@@ -103,28 +111,52 @@ fun FavouritesDetailsScreen(showFAB: MutableState<Boolean>, favouriteLocation: F
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            if(isLoading){
+            if (isLoading) {
                 LoadingIndicator()
             } else {
-                when (currentWeatherState){
+                when (currentWeatherState) {
                     is CurrentWeatherResponseState.Loading -> {}
-                    is CurrentWeatherResponseState.Failed -> { DisplayCurrentWeather(favouriteLocation.currentWeather,selectedUnit) }
-                    is CurrentWeatherResponseState.Success -> { val currentWeather = (currentWeatherState as CurrentWeatherResponseState.Success).currentWeather
-                        DisplayCurrentWeather(currentWeather, selectedUnit) }
+                    is CurrentWeatherResponseState.Failed -> {
+                        DisplayCurrentWeather(favouriteLocation.currentWeather, selectedUnit)
+                    }
+
+                    is CurrentWeatherResponseState.Success -> {
+                        val currentWeather =
+                            (currentWeatherState as CurrentWeatherResponseState.Success).currentWeather
+                        DisplayCurrentWeather(currentWeather, selectedUnit)
+                    }
                 }
 
-                when(todayForecastWeatherState){
+                when (todayForecastWeatherState) {
                     is ForecastWeatherResponseState.Loading -> {}
-                    is ForecastWeatherResponseState.Failed -> { ListOfHourCards(favouriteLocation.forecastWeather.list.subList(0,8),selectedUnit) }
-                    is ForecastWeatherResponseState.Success -> { val todayForecast = (todayForecastWeatherState as ForecastWeatherResponseState.Success).forecastWeather
-                        ListOfHourCards(todayForecast,selectedUnit) }
+                    is ForecastWeatherResponseState.Failed -> {
+                        ListOfHourCards(
+                            favouriteLocation.forecastWeather.list.subList(0, 8),
+                            selectedUnit
+                        )
+                    }
+
+                    is ForecastWeatherResponseState.Success -> {
+                        val todayForecast =
+                            (todayForecastWeatherState as ForecastWeatherResponseState.Success).forecastWeather
+                        ListOfHourCards(todayForecast, selectedUnit)
+                    }
                 }
 
-                when(daysForecastWeather){
+                when (daysForecastWeather) {
                     is ForecastWeatherResponseState.Loading -> {}
-                    is ForecastWeatherResponseState.Failed -> { Display5DaysForecastOffline(favouriteLocation.forecastWeather.list,selectedUnit) }
-                    is ForecastWeatherResponseState.Success -> { val fiveDaysList = (daysForecastWeather as ForecastWeatherResponseState.Success).forecastWeather
-                        ListOf5WeekDaysCards(fiveDaysList,selectedUnit) }
+                    is ForecastWeatherResponseState.Failed -> {
+                        Display5DaysForecastOffline(
+                            favouriteLocation.forecastWeather.list,
+                            selectedUnit
+                        )
+                    }
+
+                    is ForecastWeatherResponseState.Success -> {
+                        val fiveDaysList =
+                            (daysForecastWeather as ForecastWeatherResponseState.Success).forecastWeather
+                        ListOf5WeekDaysCards(fiveDaysList, selectedUnit)
+                    }
                 }
             }
         }

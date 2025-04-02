@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -27,7 +27,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.example.tempora.R
-import com.example.tempora.composables.settings.utils.formatNumberBasedOnLanguage
+import com.example.tempora.utils.helpers.formatNumberBasedOnLanguage
 import java.time.Instant
 import java.time.ZoneId
 import java.time.format.DateTimeFormatter
@@ -71,7 +71,7 @@ fun WeatherDetails(
                     value = formatNumberBasedOnLanguage("$cloud%")
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                Divider(
+                HorizontalDivider(
                     modifier = Modifier
                         .width(160.dp)
                         .padding(horizontal = 8.dp),
@@ -94,9 +94,13 @@ fun WeatherDetails(
             )
 
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                WeatherDetailItem(icon = R.drawable.wind, label = stringResource(R.string.wind), value = formatNumberBasedOnLanguage(windSpeed))
+                WeatherDetailItem(
+                    icon = R.drawable.wind,
+                    label = stringResource(R.string.wind),
+                    value = formatNumberBasedOnLanguage(windSpeed)
+                )
                 Spacer(modifier = Modifier.height(12.dp))
-                Divider(
+                HorizontalDivider(
                     modifier = Modifier
                         .width(160.dp)
                         .padding(horizontal = 8.dp),
@@ -104,7 +108,11 @@ fun WeatherDetails(
                     color = Color.White.copy(alpha = 0.4f)
                 )
                 Spacer(modifier = Modifier.height(12.dp))
-                WeatherDetailItem(icon = R.drawable.pressure, label = stringResource(R.string.pressure), value = formatNumberBasedOnLanguage(pressure))
+                WeatherDetailItem(
+                    icon = R.drawable.pressure,
+                    label = stringResource(R.string.pressure),
+                    value = formatNumberBasedOnLanguage(pressure)
+                )
             }
         }
     }
@@ -124,9 +132,19 @@ fun WeatherDetailItem(icon: Int, label: String, value: String) {
         Column(
             modifier = Modifier.width(80.dp), // Ensuring consistent text width
             horizontalAlignment = Alignment.CenterHorizontally // Align text to the start)
-        ){
-            Text(text = label, color = Color.White, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
-            Text(text = value, color = Color.White, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.Bold)
+        ) {
+            Text(
+                text = label,
+                color = Color.White,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
+            Text(
+                text = value,
+                color = Color.White,
+                style = MaterialTheme.typography.titleMedium,
+                fontWeight = FontWeight.Bold
+            )
         }
     }
 }

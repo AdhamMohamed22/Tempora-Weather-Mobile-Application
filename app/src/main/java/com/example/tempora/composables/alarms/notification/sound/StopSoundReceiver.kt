@@ -4,7 +4,6 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import androidx.core.app.NotificationManagerCompat
-import com.example.tempora.MainActivity
 import com.example.tempora.composables.alarms.notification.stopNotificationSound
 
 class StopSoundReceiver : BroadcastReceiver() {

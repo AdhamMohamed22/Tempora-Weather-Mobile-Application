@@ -1,6 +1,5 @@
 package com.example.tempora.composables.settings
 
-import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -49,15 +48,14 @@ import com.example.tempora.composables.settings.utils.getTemperatureUnit
 import com.example.tempora.composables.settings.utils.getTemperatureValue
 import com.example.tempora.composables.settings.utils.getWindSpeedUnit
 import com.example.tempora.composables.settings.utils.getWindSpeedValue
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.runBlocking
 
 @Composable
 fun SettingsScreen(showFAB: MutableState<Boolean>, navigationAction: () -> Unit) {
     showFAB.value = false
 
     val context = LocalContext.current
-    val settingsScreenViewModelFactory = SettingsScreenViewModel.SettingScreenViewModelFactory(PreferencesManager.getInstance(context))
+    val settingsScreenViewModelFactory =
+        SettingsScreenViewModel.SettingScreenViewModelFactory(PreferencesManager.getInstance(context))
     val viewModel: SettingsScreenViewModel = viewModel(factory = settingsScreenViewModelFactory)
 
     val selectedLanguageState by viewModel.selectedLanguage.collectAsStateWithLifecycle()
@@ -92,7 +90,12 @@ fun SettingsScreen(showFAB: MutableState<Boolean>, navigationAction: () -> Unit)
                     modifier = Modifier.size(35.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(stringResource(R.string.settings), style = MaterialTheme.typography.titleLarge, color = colorResource(R.color.white), fontWeight = FontWeight.Bold)
+                Text(
+                    stringResource(R.string.settings),
+                    style = MaterialTheme.typography.titleLarge,
+                    color = colorResource(R.color.white),
+                    fontWeight = FontWeight.Bold
+                )
             }
 
             Spacer(Modifier.height(16.dp))
@@ -100,10 +103,19 @@ fun SettingsScreen(showFAB: MutableState<Boolean>, navigationAction: () -> Unit)
             SettingCard(
                 title = stringResource(R.string.language),
                 icon = painterResource(R.drawable.language),
-                options = listOf(stringResource(R.string.english), stringResource(R.string.arabic), stringResource(R.string.default_lang)),
+                options = listOf(
+                    stringResource(R.string.english),
+                    stringResource(R.string.arabic),
+                    stringResource(R.string.default_lang)
+                ),
                 selectedOption = getLanguage(selectedLanguageState),
                 onOptionSelected = {
-                    viewModel.savePreference(PreferencesManager.LANGUAGE_KEY, getLanguageValue(it),context)}
+                    viewModel.savePreference(
+                        PreferencesManager.LANGUAGE_KEY,
+                        getLanguageValue(it),
+                        context
+                    )
+                }
             )
 
             SettingCard(
@@ -112,8 +124,12 @@ fun SettingsScreen(showFAB: MutableState<Boolean>, navigationAction: () -> Unit)
                 options = listOf(stringResource(R.string.gps), stringResource(R.string.map)),
                 selectedOption = getLocation(selectedLocationState),
                 onOptionSelected = {
-                    viewModel.savePreference(PreferencesManager.LOCATION_KEY, getLocationValue(it),context)
-                    if(it == "Map" || it == "الخريطة"){
+                    viewModel.savePreference(
+                        PreferencesManager.LOCATION_KEY,
+                        getLocationValue(it),
+                        context
+                    )
+                    if (it == "Map" || it == "الخريطة") {
                         navigationAction()
                     } else {
                         val sharedPref = SharedPref.getInstance(context)
@@ -125,22 +141,34 @@ fun SettingsScreen(showFAB: MutableState<Boolean>, navigationAction: () -> Unit)
             SettingCard(
                 title = stringResource(R.string.temperature_unit),
                 icon = painterResource(R.drawable.thermostat),
-                options = listOf(stringResource(R.string.kelvin_k),
+                options = listOf(
+                    stringResource(R.string.kelvin_k),
                     stringResource(R.string.celsius_c), stringResource(R.string.fahrenheit_f)
                 ),
                 selectedOption = getTemperatureUnit(selectedTemperatureUnitState),
                 onOptionSelected = {
-                    viewModel.savePreference(PreferencesManager.TEMPERATURE_UNIT_KEY, getTemperatureValue(it),context)}
+                    viewModel.savePreference(
+                        PreferencesManager.TEMPERATURE_UNIT_KEY,
+                        getTemperatureValue(it),
+                        context
+                    )
+                }
             )
 
             SettingCard(
                 title = stringResource(R.string.wind_speed_unit),
                 icon = painterResource(R.drawable.windspeed),
-                options = listOf(stringResource(R.string.meter_sec),
-                    stringResource(R.string.mile_hour)),
+                options = listOf(
+                    stringResource(R.string.meter_sec),
+                    stringResource(R.string.mile_hour)
+                ),
                 selectedOption = getWindSpeedUnit(selectedWindSpeedUnitState),
                 onOptionSelected = {
-                    viewModel.savePreference(PreferencesManager.WIND_SPEED_UNIT_KEY, getWindSpeedValue(it),context)
+                    viewModel.savePreference(
+                        PreferencesManager.WIND_SPEED_UNIT_KEY,
+                        getWindSpeedValue(it),
+                        context
+                    )
                 }
             )
         }
@@ -148,7 +176,13 @@ fun SettingsScreen(showFAB: MutableState<Boolean>, navigationAction: () -> Unit)
 }
 
 @Composable
-fun SettingCard(title: String, icon: Painter, options: List<String>, selectedOption: String, onOptionSelected: (String) -> Unit) {
+fun SettingCard(
+    title: String,
+    icon: Painter,
+    options: List<String>,
+    selectedOption: String,
+    onOptionSelected: (String) -> Unit
+) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -186,9 +220,17 @@ fun SettingCard(title: String, icon: Painter, options: List<String>, selectedOpt
                         RadioButton(
                             selected = option == selectedOption,
                             onClick = { onOptionSelected(option) },
-                            colors = RadioButtonDefaults.colors(selectedColor = colorResource(R.color.white), unselectedColor = colorResource(R.color.white))
+                            colors = RadioButtonDefaults.colors(
+                                selectedColor = colorResource(R.color.white),
+                                unselectedColor = colorResource(R.color.white)
+                            )
                         )
-                        Text(text = option, color = Color.White, fontSize = 16.sp, fontWeight = FontWeight.Bold)
+                        Text(
+                            text = option,
+                            color = Color.White,
+                            fontSize = 16.sp,
+                            fontWeight = FontWeight.Bold
+                        )
                     }
                 }
             }

@@ -20,7 +20,9 @@ import com.example.tempora.R
 fun NetworkCutOffAnimation() {
     val composition by rememberLottieComposition(LottieCompositionSpec.RawRes(R.raw.networkcutoff))
     Box(
-        modifier = Modifier.fillMaxSize().background(colorResource(R.color.white)),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(colorResource(R.color.white)),
         contentAlignment = Alignment.Center
     ) {
         LottieAnimation(
