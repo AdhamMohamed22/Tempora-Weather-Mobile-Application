@@ -69,7 +69,7 @@ class SettingsScreenViewModel(private val preferencesManager: PreferencesManager
             preferencesManager.savePreference(key, value)
 
             if (key == PreferencesManager.LANGUAGE_KEY) {
-                val languageCode = if (value == "Arabic" || value == "العربية") "ar" else "en"
+                val languageCode = if (value == "Arabic" || value == "العربية") "ar" else if (value == "English" || value == "الإنجليزية") "en" else if (value == "Default" || value == "الافتراضية") "" else "en"
                 LocalizationHelper.setLocale(context, languageCode)
 
                 // Restart the activity to apply language change

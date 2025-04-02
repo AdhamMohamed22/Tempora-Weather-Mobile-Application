@@ -59,6 +59,7 @@ fun getLanguage(value: String): String {
         return when(value){
             "English" -> "الإنجليزية"
              "Arabic" -> "العربية"
+            "Default" -> "الافتراضية"
              else -> "الإنجليزية"
         }
     }
@@ -71,6 +72,7 @@ fun getLanguageValue(value: String): String {
         return when(value){
             "الإنجليزية" -> "English"
             "العربية" -> "Arabic"
+            "الافتراضية" -> "Default"
             else -> "English"
         }
     }

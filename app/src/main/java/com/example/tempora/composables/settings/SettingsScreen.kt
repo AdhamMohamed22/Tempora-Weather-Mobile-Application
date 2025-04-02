@@ -100,7 +100,7 @@ fun SettingsScreen(showFAB: MutableState<Boolean>, navigationAction: () -> Unit)
             SettingCard(
                 title = stringResource(R.string.language),
                 icon = painterResource(R.drawable.language),
-                options = listOf(stringResource(R.string.english), stringResource(R.string.arabic)),
+                options = listOf(stringResource(R.string.english), stringResource(R.string.arabic), stringResource(R.string.default_lang)),
                 selectedOption = getLanguage(selectedLanguageState),
                 onOptionSelected = {
                     viewModel.savePreference(PreferencesManager.LANGUAGE_KEY, getLanguageValue(it),context)}

@@ -67,6 +67,7 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.gms.location.Priority
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import java.util.Locale
 
 const val REQUEST_LOCATION_CODE = 2005
 
@@ -99,7 +100,7 @@ class MainActivity : ComponentActivity() {
         val savedLanguage = runBlocking {
             preferencesManager.getPreference(PreferencesManager.LANGUAGE_KEY, "English").first()
         }
-        val languageCode = if (savedLanguage == "Arabic") "ar" else "en"
+        val languageCode = if (savedLanguage == "Default") Locale.getDefault().language else if (savedLanguage == "Arabic") "ar" else "en"
         LocalizationHelper.setLocale(this, languageCode)
 
         setContent {
