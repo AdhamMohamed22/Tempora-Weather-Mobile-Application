@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.tempora.R
 import com.example.tempora.data.models.FavouriteLocation
 import com.example.tempora.data.repository.Repository
-import com.example.tempora.data.response_state.FavouriteLocationsResponseState
+import com.example.tempora.data.responsestate.FavouriteLocationsResponseState
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

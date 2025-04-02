@@ -16,7 +16,7 @@ import org.junit.Test
 import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 import com.example.tempora.R
-import com.example.tempora.data.response_state.AlarmsResponseState
+import com.example.tempora.data.responsestate.AlarmsResponseState
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.advanceUntilIdle

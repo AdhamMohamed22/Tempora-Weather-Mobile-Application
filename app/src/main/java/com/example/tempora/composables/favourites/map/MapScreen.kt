@@ -31,11 +31,10 @@ import com.example.tempora.BuildConfig
 import com.example.tempora.R
 import com.example.tempora.data.local.WeatherDatabase
 import com.example.tempora.data.local.WeatherLocalDataSource
-import com.example.tempora.data.models.FavouriteLocation
 import com.example.tempora.data.remote.RetrofitHelper
 import com.example.tempora.data.remote.WeatherRemoteDataSource
 import com.example.tempora.data.repository.Repository
-import com.example.tempora.utils.getAddressFromLocation
+import com.example.tempora.utils.helpers.getAddressFromLocation
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng

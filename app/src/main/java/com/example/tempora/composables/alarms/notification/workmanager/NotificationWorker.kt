@@ -12,7 +12,7 @@ import com.example.tempora.data.local.WeatherLocalDataSource
 import com.example.tempora.data.remote.RetrofitHelper
 import com.example.tempora.data.remote.WeatherRemoteDataSource
 import com.example.tempora.data.repository.Repository
-import com.example.tempora.utils.getTemperatureUnit
+import com.example.tempora.utils.helpers.getTemperatureUnit
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first

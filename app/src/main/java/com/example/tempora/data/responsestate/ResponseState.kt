@@ -1,9 +1,8 @@
-package com.example.tempora.data.response_state
+package com.example.tempora.data.responsestate
 
 import com.example.tempora.data.models.Alarm
 import com.example.tempora.data.models.CurrentWeather
 import com.example.tempora.data.models.FavouriteLocation
-import com.example.tempora.data.models.ForecastWeather
 import com.example.tempora.data.models.Item0
 
 sealed class CurrentWeatherResponseState {

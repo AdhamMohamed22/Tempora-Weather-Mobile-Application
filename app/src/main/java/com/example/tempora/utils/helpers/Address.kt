@@ -1,9 +1,8 @@
-package com.example.tempora.utils
+package com.example.tempora.utils.helpers
 
 import android.location.Geocoder
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalContext
-import com.example.tempora.data.models.FavouriteLocation
 import java.util.Locale
 
 @Composable

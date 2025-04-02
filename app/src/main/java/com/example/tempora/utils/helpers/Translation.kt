@@ -1,4 +1,4 @@
-package com.example.tempora.composables.settings.utils
+package com.example.tempora.utils.helpers
 
 import java.util.Locale
 

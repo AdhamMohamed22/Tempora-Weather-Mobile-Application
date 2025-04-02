@@ -1,4 +1,4 @@
-package com.example.tempora.utils
+package com.example.tempora.utils.helpers
 
 fun getTemperatureUnit(selectedUnit: String): String? {
     return when (selectedUnit) {

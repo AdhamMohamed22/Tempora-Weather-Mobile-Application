@@ -1,4 +1,4 @@
-package com.example.tempora.utils
+package com.example.tempora.utils.helpers
 
 import android.content.Context
 import android.net.ConnectivityManager
